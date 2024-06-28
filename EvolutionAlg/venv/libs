@@ -1,0 +1,3 @@
+// GUI
+pip install customtkinter
+pip install ttkthemes

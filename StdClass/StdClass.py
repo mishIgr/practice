@@ -16,6 +16,9 @@ class Point:
     def mark(self) -> int:
         return self._mark
 
+    def copy(self):
+        return Point(self._x, self._y, self._mark)
+
 
 class Rectangle:
     def __init__(self, left_up_point: Point, right_down_point: Point) -> None:
@@ -24,9 +27,9 @@ class Rectangle:
 
     @property
     def lup(self):
-        return self._left_up_point
+        return self._left_up_point.copy()
 
     @property
     def rdp(self):
-        return self._right_down_point
+        return self._right_down_point.copy()
 

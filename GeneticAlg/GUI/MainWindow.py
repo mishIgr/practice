@@ -53,6 +53,7 @@ class App(ctk.CTk):
         self.createStateLabel('Шанс мутации', 0)
         self.createStateLabel('Шанс cкрещивания', 2)
         self.createStateLabel('Максимальное количество эпох', 4)
+        self.createStateLabel('Шанс увеличения прямоугольника при мутации', 6)
 
         #информация о начальных состояних
         self.state_frame_info = ctk.CTkFrame(master=self.general_left_frame, fg_color='#808080', height=90, width=270)
@@ -312,7 +313,7 @@ class App(ctk.CTk):
                                                filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
         with open(file_path, newline='', encoding='utf-8') as csvfile:
             csvreader = csv.reader(csvfile, delimiter=',')
-            for x, y, value in csvreader:
+            for x, y, value, *empty in csvreader:
                 try:
                     x_int = int(x)
                     y_int = int(y)

@@ -1,4 +1,4 @@
-from GUI.MainWindow import *
+from GUI.MainWindow.MainWindow import *
 
 
 app = App()

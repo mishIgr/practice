@@ -32,4 +32,3 @@ class Rectangle:
     @property
     def rdp(self):
         return self._right_down_point.copy()
-

@@ -4,19 +4,22 @@ from tkinter import filedialog
 import random
 import matplotlib.pyplot as plt
 import customtkinter as ctk
-from PIL import Image
+from PIL import Image, ImageTk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 
 class StartWindow(ctk.CTk):
     def __init__(self) -> None:
         super().__init__(fg_color="#dbdbdb")
-        self.geometry('640x1000')
+        self.geometry('640x850')
         self.title("Установка начальных параметров")
         self.resizable(False, False)
         self._start_params_frame: ctk.CTkFrame = StartParamsFrame(self)
         self._point_frame: ctk.CTkFrame = PointFrame(self)
-        self_methods_alg_frame: ctk.CTkFrame = MethodsAlgFrame(self)
+        self._methods_alg_frame: ctk.CTkFrame = MethodsAlgFrame(self)
+        self._values_dict = self._start_params_frame.get_value_start_param()
+        self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
+                                                                 value_params=self._values_dict)
 
 
 class StartParamsFrame(ctk.CTkFrame):
@@ -25,6 +28,9 @@ class StartParamsFrame(ctk.CTkFrame):
         self.grid(row=0, column=0)
         self.grid_propagate(False)
         self._setter_start_params: ctk.CTkFrame = SetterStartParams(self)
+
+    def get_value_start_param(self) -> dict[str, float]:
+        return self._setter_start_params.get_value_start_param()
 
 
 class ViewStartParams(ctk.CTkFrame):
@@ -83,8 +89,8 @@ class SetterStartParams(ctk.CTkFrame):
         finally:
             self._string_value_params[name_param].set("")
 
-    def get_value_start_param(self, name_param: str) -> float:
-        return self._value_start_params[name_param]
+    def get_value_start_param(self) -> dict[str, float]:
+        return self._value_start_params
 
 
 class PointFrame(ctk.CTkFrame):
@@ -94,6 +100,10 @@ class PointFrame(ctk.CTkFrame):
         self.grid_propagate(False)
         self._set_point_frame: ctk.CTkFrame = SetterPoint(self)
 
+    def get_points(self) -> set[Point]:
+        return self._set_point_frame.get_points()
+
+
 
 class SetterPoint(ctk.CTkFrame):
     def __init__(self, master: ctk.CTkFrame) -> None:
@@ -101,6 +111,9 @@ class SetterPoint(ctk.CTkFrame):
         self.place(relx=0.5, rely=0.75, anchor='center')
         self._view_pointers: ctk.CTkScrollableFrame = ViewPointers(master)
         self.__create_choose_add_points()
+
+    def get_points(self) -> set[Point]:
+        return self._view_pointers.get_points()
 
     def __create_choose_add_points(self) -> None:
         self.__create_input_frame_point()
@@ -251,7 +264,7 @@ class ViewPointers(ctk.CTkScrollableFrame):
 
 class MethodsAlgFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
-        super().__init__(master=master, fg_color='green', width=640, height=280)
+        super().__init__(master=master, width=640, height=280)
         self.grid(row=1, column=0, rowspan=2, columnspan=2, padx=0, pady=0)
         self.grid_propagate(False)
         self._selection_values: list[str] = [
@@ -275,23 +288,23 @@ class MethodsAlgFrame(ctk.CTkFrame):
             'Мутация перетасовкой',
             'Вещественная мутация'
         ]
-        self._selection_method = ChooseMethodFrame(self, row=0, column=0,
-                                                   name_method='Выберите метод отбора',
-                                                   values=self._selection_values,
-                                                   base_value=self._selection_values[0])
-        self._crossing_method = ChooseMethodFrame(self, row=0, column=1,
-                                                  name_method='Выберите метод скрещивания',
-                                                  values=self._crossing_values,
-                                                  base_value=self._crossing_values[0])
-        self._mutation_method = ChooseMethodFrame(self, row=1, column=0,
-                                                  name_method='Выберите метод мутации',
-                                                  values=self._mutation_values,
-                                                  base_value=self._mutation_values[0])
+        self._selection_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=0,
+                                                                 name_method='Выберите метод отбора',
+                                                                 values=self._selection_values,
+                                                                 base_value=self._selection_values[0])
+        self._crossing_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=1,
+                                                                name_method='Выберите метод скрещивания',
+                                                                values=self._crossing_values,
+                                                                base_value=self._crossing_values[0])
+        self._mutation_method: ctk.CTkFrame = ChooseMethodFrame(self, row=1, column=0,
+                                                                name_method='Выберите метод мутации',
+                                                                values=self._mutation_values,
+                                                                base_value=self._mutation_values[0])
 
 
 class ChooseMethodFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTkFrame, row, column, name_method, values, base_value) -> None:
-        super().__init__(master=master, fg_color='red', height=140, width=320)
+        super().__init__(master=master, height=140, width=320, fg_color='#dbdbdb')
         self.grid(row=row, column=column, padx=0, pady=0)
         self.grid_propagate(False)
         self._name_method: str = name_method
@@ -316,6 +329,59 @@ class ChooseMethodFrame(ctk.CTkFrame):
 
     def get_value_method(self) -> str:
         return self._value_method
+
+
+class ErrorMessage(ctk.CTk):
+    def __init__(self, text: str):
+        super().__init__(fg_color='red')
+        self._window_width = 350
+        self._window_height = 100
+        self.resizable(False, False)
+        self.setup_window()
+        self.add_widgets(text)
+        self.after(1000, self.fade_out)
+
+    def fade_out(self):
+        alpha = self.attributes("-alpha")
+        if alpha > 0:
+            alpha -= 0.05
+            self.attributes("-alpha", alpha)
+            self.after(50, self.fade_out)
+        else:
+            self.destroy()
+
+    def setup_window(self):
+        position_x = self.winfo_screenwidth() - self._window_width
+        position_y = self.winfo_screenheight() - self._window_height - 100
+        self.geometry(f"{self._window_width}x{self._window_height}+{position_x}+{position_y}")
+        self.title("Error")
+
+    def add_widgets(self, text: str):
+        text_label = ctk.CTkLabel(self, text=text, font=("Arial", 20), bg_color="transparent")
+        text_label.place(relx=0.5, rely=0.5, anchor='center')
+
+
+class StartWorkButton(ctk.CTkButton):
+    def __init__(self, master: ctk.CTk, points: list[Point], value_params: dict[str, float]) -> None:
+        super().__init__(master=master, text="Начать работу", width=400, height=70,
+                         fg_color='#228B22',
+                         hover_color='#008000',
+                         command=self.handler_start_work)
+        self._points: set[Point] = points
+        self._value_params: dict[str, float] = value_params
+        self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
+
+    def handler_start_work(self):
+        if len(self._points) == 0:
+            ErrorMessage("Создайте хотя бы одну точку!").mainloop()
+        elif 'Шанс мутации' not in self._value_params:
+            ErrorMessage("Установите вероятность мутации!").mainloop()
+        elif 'Шанс cкрещивания' not in self._value_params:
+            ErrorMessage("Установите вероятность cкрещивания!").mainloop()
+        elif 'Шанс увеличения прям. при мутации' not in self._value_params:
+            ErrorMessage("Установите шанс увеличения прям. при мутации!").mainloop()
+        elif 'Максимальное количество эпох' not in self._value_params:
+            ErrorMessage("Установите максимальное количество эпох!").mainloop()
 
 
 a = StartWindow()

@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2b44764e-e3eb-4ad2-a2a5-29cbea0e9acb" name="Changes" comment="Add new setter start param">
+    <list default="true" id="2b44764e-e3eb-4ad2-a2a5-29cbea0e9acb" name="Changes" comment="add choose method frame">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI/MainWindow/StartWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/MainWindow/StartWindow.py" afterDir="false" />
     </list>
@@ -12,6 +12,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -30,6 +37,7 @@
   "keyToString": {
     "Python.MainWindow.executor": "Run",
     "Python.StartWindow.executor": "Run",
+    "Python.a.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -84,7 +92,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1719756644657</updated>
-      <workItem from="1719756646123" duration="13538000" />
+      <workItem from="1719756646123" duration="17191000" />
     </task>
     <task id="LOCAL-00001" summary="Add new setter start param">
       <option name="closed" value="true" />
@@ -118,19 +126,40 @@
       <option name="project" value="LOCAL" />
       <updated>1719769420930</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="add choose method frame">
+      <option name="closed" value="true" />
+      <created>1719771494472</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1719771494472</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add new setter start param" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add new setter start param" />
+    <MESSAGE value="add choose method frame" />
+    <option name="LAST_COMMIT_MESSAGE" value="add choose method frame" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GeneticAlg$MainWindow.coverage" NAME="MainWindow Coverage Results" MODIFIED="1719766051875" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
-    <SUITE FILE_PATH="coverage/GeneticAlg$StartWindow.coverage" NAME="StartWindow Coverage Results" MODIFIED="1719771438334" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
+    <SUITE FILE_PATH="coverage/GeneticAlg$StartWindow.coverage" NAME="StartWindow Coverage Results" MODIFIED="1719775083011" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
     <SUITE FILE_PATH="coverage/GeneticAlg$main.coverage" NAME="main Coverage Results" MODIFIED="1719766060563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GeneticAlg$a.coverage" NAME="a Coverage Results" MODIFIED="1719774079781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
   </component>
 </project>

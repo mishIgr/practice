@@ -10,17 +10,18 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 class StartWindow(ctk.CTk):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(fg_color="#dbdbdb")
         self.geometry('640x1000')
         self.title("Установка начальных параметров")
         self.resizable(False, False)
         self._start_params_frame: ctk.CTkFrame = StartParamsFrame(self)
         self._point_frame: ctk.CTkFrame = PointFrame(self)
+        self_methods_alg_frame: ctk.CTkFrame = MethodsAlgFrame(self)
 
 
 class StartParamsFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
-        super().__init__(master=master, width=320, height=450, fg_color='green')
+        super().__init__(master=master, width=320, height=450)
         self.grid(row=0, column=0)
         self.grid_propagate(False)
         self._setter_start_params: ctk.CTkFrame = SetterStartParams(self)
@@ -88,7 +89,7 @@ class SetterStartParams(ctk.CTkFrame):
 
 class PointFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
-        super().__init__(master=master, fg_color='red', height=420, width=320)
+        super().__init__(master=master, height=420, width=320)
         self.grid(row=0, column=1, padx=0, pady=0, sticky='nsew')
         self.grid_propagate(False)
         self._set_point_frame: ctk.CTkFrame = SetterPoint(self)
@@ -96,7 +97,7 @@ class PointFrame(ctk.CTkFrame):
 
 class SetterPoint(ctk.CTkFrame):
     def __init__(self, master: ctk.CTkFrame) -> None:
-        super().__init__(master=master, fg_color='yellow')
+        super().__init__(master=master, fg_color='#dbdbdb')
         self.place(relx=0.5, rely=0.75, anchor='center')
         self._view_pointers: ctk.CTkScrollableFrame = ViewPointers(master)
         self.__create_choose_add_points()
@@ -194,7 +195,7 @@ class SetterPoint(ctk.CTkFrame):
             pass
 
     def __create_input_frame_point(self) -> None:
-        input_frame = ctk.CTkFrame(master=self, fg_color='green')
+        input_frame = ctk.CTkFrame(master=self)
         input_frame.grid(row=0, column=0, padx=0, pady=0)
         self.x_string = ctk.StringVar()
         self.y_string = ctk.StringVar()
@@ -246,6 +247,75 @@ class ViewPointers(ctk.CTkScrollableFrame):
 
     def get_points_clear(self) -> set[Point]:
         return self._set_points_clear
+
+
+class MethodsAlgFrame(ctk.CTkFrame):
+    def __init__(self, master: ctk.CTk) -> None:
+        super().__init__(master=master, fg_color='green', width=640, height=280)
+        self.grid(row=1, column=0, rowspan=2, columnspan=2, padx=0, pady=0)
+        self.grid_propagate(False)
+        self._selection_values: list[str] = [
+            'Правило рулетки',
+            'Стохастическая универсальная выборка',
+            'Ранжированный отбор',
+            'Масштабирование приспособленности',
+            'Турнирный отбор']
+        self._crossing_values: list[str] = [
+            'Одноточечное скрещивание',
+            'Двухточечное скрещивание',
+            'Равномерное скрещивание',
+            'Упорядоченное скрещивание',
+            'Скрещивание смешением',
+            'Имитация двоичного скрещивания'
+        ]
+        self._mutation_values: list[str] = [
+            'Инвертирование бита',
+            'Мутация обменом',
+            'Мутация обращением',
+            'Мутация перетасовкой',
+            'Вещественная мутация'
+        ]
+        self._selection_method = ChooseMethodFrame(self, row=0, column=0,
+                                                   name_method='Выберите метод отбора',
+                                                   values=self._selection_values,
+                                                   base_value=self._selection_values[0])
+        self._crossing_method = ChooseMethodFrame(self, row=0, column=1,
+                                                  name_method='Выберите метод скрещивания',
+                                                  values=self._crossing_values,
+                                                  base_value=self._crossing_values[0])
+        self._mutation_method = ChooseMethodFrame(self, row=1, column=0,
+                                                  name_method='Выберите метод мутации',
+                                                  values=self._mutation_values,
+                                                  base_value=self._mutation_values[0])
+
+
+class ChooseMethodFrame(ctk.CTkFrame):
+    def __init__(self, master: ctk.CTkFrame, row, column, name_method, values, base_value) -> None:
+        super().__init__(master=master, fg_color='red', height=140, width=320)
+        self.grid(row=row, column=column, padx=0, pady=0)
+        self.grid_propagate(False)
+        self._name_method: str = name_method
+        self._values: list[str] = values
+        self._value_method: str = base_value
+        self.__create_name_label()
+        self.__create_choose_frame()
+
+    def __create_name_label(self) -> ctk.CTkLabel:
+        border_frame = ctk.CTkFrame(master=self, border_width=4, border_color='black', width=300, height=100)
+        border_frame.place(relx=0.5, rely=0.25, anchor='center')
+        name_label = ctk.CTkLabel(master=border_frame, text=self._name_method, font=("Arial", 20))
+        name_label.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
+
+    def __create_choose_frame(self):
+        choose_method_selection = ctk.CTkOptionMenu(master=self, width=250, height=50, values=self._values,
+                                                    command=self.__handler_method_selection)
+        choose_method_selection.place(relx=0.5, rely=0.75, anchor='center')
+
+    def __handler_method_selection(self, choice):
+        self._value_method = choice
+
+    def get_value_method(self) -> str:
+        return self._value_method
 
 
 a = StartWindow()

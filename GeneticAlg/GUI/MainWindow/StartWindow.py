@@ -323,6 +323,7 @@ class ChooseMethodFrame(ctk.CTkFrame):
         choose_method_selection = ctk.CTkOptionMenu(master=self, width=250, height=50, values=self._values,
                                                     command=self.__handler_method_selection)
         choose_method_selection.place(relx=0.5, rely=0.75, anchor='center')
+        choose_method_selection.grid_propagate(False)
 
     def __handler_method_selection(self, choice):
         self._value_method = choice
@@ -334,7 +335,7 @@ class ChooseMethodFrame(ctk.CTkFrame):
 class ErrorMessage(ctk.CTk):
     def __init__(self, text: str):
         super().__init__(fg_color='red')
-        self._window_width = 350
+        self._window_width = 470
         self._window_height = 100
         self.resizable(False, False)
         self.setup_window()
@@ -373,7 +374,8 @@ class StartWorkButton(ctk.CTkButton):
 
     def handler_start_work(self):
         if len(self._points) == 0:
-            ErrorMessage("Создайте хотя бы одну точку!").mainloop()
+            a = ErrorMessage("Создайте хотя бы одну точку!")
+            a.mainloop()
         elif 'Шанс мутации' not in self._value_params:
             ErrorMessage("Установите вероятность мутации!").mainloop()
         elif 'Шанс cкрещивания' not in self._value_params:

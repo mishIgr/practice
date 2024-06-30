@@ -19,6 +19,16 @@ class Point:
     def copy(self):
         return Point(self._x, self._y, self._mark)
 
+    def __eq__(self, other):
+        if isinstance(other, Point):
+            return (self._x == other.x and
+                    self._y == other.y and
+                    self._mark == other.mark)
+        return False
+
+    def __hash__(self):
+        return hash((self._x, self._y, self._mark))
+
 
 class Rectangle:
     def __init__(self, left_up_point: Point, right_down_point: Point) -> None:

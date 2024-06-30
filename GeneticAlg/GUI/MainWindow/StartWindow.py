@@ -13,14 +13,14 @@ class StartWindow(ctk.CTk):
         super().__init__()
         self.geometry('640x1000')
         self.title("Установка начальных параметров")
-        self.grid_propagate(False)
         self.resizable(False, False)
         self._start_params_frame: ctk.CTkFrame = StartParamsFrame(self)
+        self._point_frame: ctk.CTkFrame = PointFrame(self)
 
 
 class StartParamsFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
-        super().__init__(master=master, width=330, height=450, fg_color='green')
+        super().__init__(master=master, width=320, height=450, fg_color='green')
         self.grid(row=0, column=0)
         self.grid_propagate(False)
         self._setter_start_params: ctk.CTkFrame = SetterStartParams(self)
@@ -74,14 +74,178 @@ class SetterStartParams(ctk.CTkFrame):
                 if 0 <= number <= 1:
                     self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {number * 100} %')
                     self._value_start_params[name_param] = number
-            else:
-                if 0 <= number:
-                    self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {number}')
-                    self._value_start_params[name_param] = number
+            elif 0 <= number:
+                self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {number}')
+                self._value_start_params[name_param] = number
         except ValueError:
             pass
         finally:
             self._string_value_params[name_param].set("")
+
+    def get_value_start_param(self, name_param: str) -> float:
+        return self._value_start_params[name_param]
+
+
+class PointFrame(ctk.CTkFrame):
+    def __init__(self, master: ctk.CTk) -> None:
+        super().__init__(master=master, fg_color='red', height=420, width=320)
+        self.grid(row=0, column=1, padx=0, pady=0, sticky='nsew')
+        self.grid_propagate(False)
+        self._set_point_frame: ctk.CTkFrame = SetterPoint(self)
+
+
+class SetterPoint(ctk.CTkFrame):
+    def __init__(self, master: ctk.CTkFrame) -> None:
+        super().__init__(master=master, fg_color='yellow')
+        self.place(relx=0.5, rely=0.75, anchor='center')
+        self._view_pointers: ctk.CTkScrollableFrame = ViewPointers(master)
+        self.__create_choose_add_points()
+
+    def __create_choose_add_points(self) -> None:
+        self.__create_input_frame_point()
+        button_add_point = ctk.CTkButton(master=self, text='Добавить точку',
+                                         width=200, command=self.__handler_add_point)
+        button_add_point.grid(row=1, column=0, padx=0, pady=5)
+
+        button_add_point_file = ctk.CTkButton(master=self, text='Считать точки из файла',
+                                              width=200, command=self.__read_file_point)
+        button_add_point_file.grid(row=2, column=0, padx=0, pady=5)
+
+        button_add_point_random = ctk.CTkButton(master=self, text='Случайная генерация',
+                                                width=200, command=self.__open_window_randomly)
+        button_add_point_random.grid(row=3, column=0, padx=0, pady=5)
+
+        button_all_clear_points = ctk.CTkButton(master=self, text='Удалить все точки',
+                                                width=200, command=self.__clear_all_points)
+        button_all_clear_points.grid(row=4, column=0, padx=0, pady=5)
+
+    def __clear_all_points(self):
+        self._view_pointers.get_points().clear()
+        for label, button in self._view_pointers.get_points_clear():
+            button.destroy()
+            label.destroy()
+
+    def __open_window_randomly(self) -> None:
+        self.generate_random_window = ctk.CTkToplevel(self)
+        self.generate_random_window.title("Введите диапазон")
+        self.generate_random_window.geometry("250x300")
+
+        label_random = ctk.CTkLabel(self.generate_random_window, text="Введите диапазон значений генерации")
+        label_random.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+
+        self.range_random_from = ctk.CTkEntry(self.generate_random_window)
+        self.range_random_from.grid(row=1, column=0, padx=10, pady=10, sticky='we')
+
+        self.range_random_before = ctk.CTkEntry(self.generate_random_window)
+        self.range_random_before.grid(row=2, column=0, padx=10, pady=10, sticky='we')
+
+        label_count = ctk.CTkLabel(self.generate_random_window, text="Введите количество точек")
+        label_count.grid(row=3, column=0, padx=10, pady=10, sticky='w')
+
+        self.range_random_count = ctk.CTkEntry(self.generate_random_window)
+        self.range_random_count.grid(row=4, column=0, padx=10, pady=10, sticky='we')
+
+        submit_button = ctk.CTkButton(self.generate_random_window, text="Подтвердить",
+                                      command=self.__random_generate_points)
+        submit_button.grid(row=5, column=0, padx=10, pady=10, sticky='we')
+
+    def __random_generate_points(self):
+        random_from = self.range_random_from.get()
+        random_before = self.range_random_before.get()
+        random_count = self.range_random_count.get()
+        try:
+            random_from = int(random_from)
+            random_before = int(random_before)
+            random_count = int(random_count)
+            self.generate_random_window.destroy()
+            for i in range(random_count):
+                x = random.randint(min(random_from, random_before), max(random_from, random_before))
+                y = random.randint(min(random_from, random_before), max(random_from, random_before))
+                value = random.randint(0, 1)
+                point = Point(x, y, value)
+                self._view_pointers.create_point(point)
+        except ValueError:
+            pass
+
+    def __read_file_point(self) -> None:
+        file_path = filedialog.askopenfilename(title="Выберите файл",
+                                               filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
+        with open(file_path, newline='', encoding='utf-8') as file:
+            file_reader = csv.reader(file, delimiter=',')
+            for x, y, value, *empty in file_reader:
+                try:
+                    point = Point(int(x), int(y), int(value))
+                    self._view_pointers.create_point(point)
+                except ValueError:
+                    pass
+
+    def __handler_add_point(self) -> None:
+        x = self.x_string.get()
+        y = self.y_string.get()
+        value = self.value_string.get()
+        try:
+            point = Point(int(x), int(y), int(value))
+            self._view_pointers.create_point(point)
+            if int(value) in [0, 1]:
+                self.x_string.set('')
+                self.y_string.set('')
+                self.value_string.set('')
+        except ValueError:
+            pass
+
+    def __create_input_frame_point(self) -> None:
+        input_frame = ctk.CTkFrame(master=self, fg_color='green')
+        input_frame.grid(row=0, column=0, padx=0, pady=0)
+        self.x_string = ctk.StringVar()
+        self.y_string = ctk.StringVar()
+        self.value_string = ctk.StringVar()
+        x_label = ctk.CTkLabel(master=input_frame, text="X")
+        x_label.grid(row=0, column=0, padx=5, pady=0, sticky='nw')
+        x_enter = ctk.CTkEntry(master=input_frame, width=50, textvariable=self.x_string)
+        x_enter.grid(row=0, column=1, padx=0, pady=0, sticky='nw')
+        y_label = ctk.CTkLabel(master=input_frame, text="Y")
+        y_label.grid(row=0, column=2, padx=5, pady=0, sticky='nw')
+        y_enter = ctk.CTkEntry(master=input_frame, width=50, textvariable=self.y_string)
+        y_enter.grid(row=0, column=3, padx=0, pady=0, sticky='nw')
+        value_label = ctk.CTkLabel(master=input_frame, text="Значение")
+        value_label.grid(row=0, column=4, padx=5, pady=0, sticky='nw')
+        value_enter = ctk.CTkEntry(master=input_frame, width=50, textvariable=self.value_string)
+        value_enter.grid(row=0, column=5, padx=0, pady=0, sticky='nw')
+
+
+class ViewPointers(ctk.CTkScrollableFrame):
+    def __init__(self, master: ctk.CTkFrame) -> None:
+        super().__init__(master=master, width=250, height=200)
+        self.place(relx=0.5, rely=0.25, anchor='center')
+        self._points: set[Point] = set()
+        self._set_points_clear: [ctk.CTkLabel, ctk.CTkButton] = set()
+        self.bind("<Button-4>", lambda _: self._parent_canvas.yview("scroll", -1, "units"))
+        self.bind("<Button-5>", lambda _: self._parent_canvas.yview("scroll", 1, "units"))
+
+    def create_point(self, point: Point) -> None:
+        if point not in self._points and point.mark in [0, 1]:
+            row_index = len(self._points)
+            self._points.add(point)
+            text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
+            text_label.grid(row=row_index, column=0, padx=5, pady=3)
+            trash_image = ctk.CTkImage(Image.open("../images/trash.png").resize((25, 25)))
+            point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
+                                                command=lambda: self.__delete_point(point,
+                                                                                    text_label,
+                                                                                    point_button_delete))
+            point_button_delete.grid(row=row_index, column=1, padx=(40, 0), pady=5, sticky='e')
+            self._set_points_clear.add((text_label, point_button_delete))
+
+    def __delete_point(self, point: Point, label: ctk.CTkLabel, button: ctk.CTkButton) -> None:
+        self._points.remove(point)
+        label.destroy()
+        button.destroy()
+
+    def get_points(self) -> set[Point]:
+        return self._points
+
+    def get_points_clear(self) -> set[Point]:
+        return self._set_points_clear
 
 
 a = StartWindow()

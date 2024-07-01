@@ -2,10 +2,9 @@ from StdClass.StdClass import Point
 import csv
 from tkinter import filedialog
 import random
-import matplotlib.pyplot as plt
 import customtkinter as ctk
-from PIL import Image, ImageTk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from PIL import Image
+from MainWindow import *
 
 
 class StartWindow(ctk.CTk):
@@ -148,10 +147,10 @@ class SetterPoint(ctk.CTkFrame):
                                                 width=200, command=self.__clear_all_points)
         button_all_clear_points.grid(row=4, column=0, padx=0, pady=5)
         self.switcher_view_points = ctk.CTkSwitch(master=self, text='Не отображать точки',
-                                             fg_color='red', command=self.switch_event)
+                                                  fg_color='red', command=self._switch_event)
         self.switcher_view_points.grid(row=5, column=0, padx=0, pady=5)
 
-    def switch_event(self):
+    def _switch_event(self) -> None:
         if self.switcher_view_points.get():
             self._view_pointers.set_view_point_flag(False)
         else:
@@ -376,26 +375,26 @@ class ErrorMessage(ctk.CTk):
         self._window_width = 470
         self._window_height = 100
         self.resizable(False, False)
-        self.setup_window()
-        self.add_widgets(text)
-        self.after(1000, self.fade_out)
+        self._setup_window()
+        self._add_widgets(text)
+        self.after(1000, self._fade_out)
 
-    def fade_out(self):
+    def _fade_out(self) -> None:
         alpha = self.attributes("-alpha")
         if alpha > 0:
             alpha -= 0.05
             self.attributes("-alpha", alpha)
-            self.after(50, self.fade_out)
+            self.after(50, self._fade_out)
         else:
             self.destroy()
 
-    def setup_window(self):
+    def _setup_window(self):
         position_x = self.winfo_screenwidth() - self._window_width
         position_y = self.winfo_screenheight() - self._window_height - 100
         self.geometry(f"{self._window_width}x{self._window_height}+{position_x}+{position_y}")
         self.title("Error")
 
-    def add_widgets(self, text: str):
+    def _add_widgets(self, text: str):
         text_label = ctk.CTkLabel(self, text=text, font=("Arial", 20), bg_color="transparent")
         text_label.place(relx=0.5, rely=0.5, anchor='center')
 
@@ -405,18 +404,17 @@ class StartWorkButton(ctk.CTkButton):
         super().__init__(master=master, text="Начать работу", width=400, height=70,
                          fg_color='#228B22',
                          hover_color='#008000',
-                         command=self.handler_start_work)
+                         command=self._handler_start_work)
         self._points: set[Point] = points
         self._value_params: dict[str, float] = value_params
         self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
 
-    def handler_start_work(self):
+    def _handler_start_work(self):
         # print(a.get_value_params())
         print(a.get_points())
         # print(f'Метод отбора: {a.get_method_selection()}')
         # print(f'Метод скрещивания: {a.get_method_crossing()}')
         # print(f'Метод мутации: {a.get_method_mutation()}')
-
         if len(self._points) == 0:
             ErrorMessage("Создайте хотя бы одну точку!").mainloop()
         elif 'Шанс мутации' not in self._value_params:

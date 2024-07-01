@@ -20,7 +20,7 @@ class ParamMutation:
     narrowing: float
 
     def __post_init__(self) -> None:
-        if 0 > self.expansion > 1 or 0 > self.expansion > 1:
+        if 0 > self.expansion > 1 or 0 > self.narrowing > 1:
             raise ValueError('The parameters cannot represent the probability.')
 
 
@@ -45,7 +45,7 @@ class ParamGeneticAlgorithm:
             raise ValueError('Positive parameter(num_individuals) were expected.')
 
 
-def first_generation(points: set[Point], num_individuals: int) -> list[Rectangle]:
+def first_generation(points: set[Point], num_individuals: int) -> list[tuple[Rectangle, int]]:
     ...
 
 
@@ -61,8 +61,8 @@ def fitness(points: set[Point], rectangle: Rectangle, param_fitness=ParamFitness
     ...
 
 
-def get_func_next_generation(func_mutation, func_crossing, func_fitness) -> Callable[[set[Point], list[Rectangle], ParamGeneticAlgorithm], list[Rectangle]]:
-    def next_generation(points: set[Point], rectangles: list[Rectangle], param: ParamGeneticAlgorithm) -> list[Rectangle]:
+def get_func_next_generation(func_mutation, func_crossing, func_fitness) -> Callable[[set[Point], list[tuple[Rectangle, int]], ParamGeneticAlgorithm], list[Rectangle]]:
+    def next_generation(points: set[Point], rectangles: list[tuple[Rectangle, int]], param: ParamGeneticAlgorithm) -> list[Rectangle]:
         ...
 
     return next_generation

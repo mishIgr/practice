@@ -61,7 +61,10 @@ def fitness(points: set[Point], rectangle: Rectangle, param_fitness=ParamFitness
     ...
 
 
-def get_func_next_generation(func_mutation, func_crossing, func_fitness) -> Callable[[set[Point], list[tuple[Rectangle, int]], ParamGeneticAlgorithm], list[Rectangle]]:
+def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
+                             func_crossing: Callable[[Rectangle, Rectangle], Rectangle],
+                             func_fitness: Callable[[set[Point], Rectangle, ParamFitness], int]) -> (
+        Callable)[[set[Point], list[tuple[Rectangle, int]], ParamGeneticAlgorithm], list[Rectangle]]:
     def next_generation(points: set[Point], rectangles: list[tuple[Rectangle, int]], param: ParamGeneticAlgorithm) -> list[Rectangle]:
         ...
 

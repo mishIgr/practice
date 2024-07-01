@@ -123,6 +123,7 @@ class SetterPoint(ctk.CTkFrame):
     def __init__(self, master: ctk.CTkFrame) -> None:
         super().__init__(master=master, fg_color='#dbdbdb')
         self.place(relx=0.5, rely=0.75, anchor='center')
+        self._view_points_flag: bool = True
         self._view_pointers: ctk.CTkScrollableFrame = ViewPointers(master)
         self.__create_choose_add_points()
 
@@ -146,6 +147,15 @@ class SetterPoint(ctk.CTkFrame):
         button_all_clear_points = ctk.CTkButton(master=self, text='Удалить все точки',
                                                 width=200, command=self.__clear_all_points)
         button_all_clear_points.grid(row=4, column=0, padx=0, pady=5)
+        self.switcher_view_points = ctk.CTkSwitch(master=self, text='Не отображать точки',
+                                             fg_color='red', command=self.switch_event)
+        self.switcher_view_points.grid(row=5, column=0, padx=0, pady=5)
+
+    def switch_event(self):
+        if self.switcher_view_points.get():
+            self._view_pointers.set_view_point_flag(False)
+        else:
+            self._view_pointers.set_view_point_flag(True)
 
     def __clear_all_points(self):
         self._view_pointers.get_points().clear()
@@ -246,23 +256,28 @@ class ViewPointers(ctk.CTkScrollableFrame):
         super().__init__(master=master, width=250, height=200)
         self.place(relx=0.5, rely=0.25, anchor='center')
         self._points: set[Point] = set()
+        self._view_point_flag: bool = True
         self._set_points_clear: [ctk.CTkLabel, ctk.CTkButton] = set()
         self.bind("<Button-4>", lambda _: self._parent_canvas.yview("scroll", -1, "units"))
         self.bind("<Button-5>", lambda _: self._parent_canvas.yview("scroll", 1, "units"))
+
+    def set_view_point_flag(self, value: bool) -> None:
+        self._view_point_flag = value
 
     def create_point(self, point: Point) -> None:
         if point not in self._points and point.mark in [0, 1]:
             row_index = len(self._points)
             self._points.add(point)
-            text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
-            text_label.grid(row=row_index, column=0, padx=5, pady=3)
-            trash_image = ctk.CTkImage(Image.open("../images/trash.png").resize((25, 25)))
-            point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
-                                                command=lambda: self.__delete_point(point,
-                                                                                    text_label,
-                                                                                    point_button_delete))
-            point_button_delete.grid(row=row_index, column=1, padx=(40, 0), pady=5, sticky='e')
-            self._set_points_clear.add((text_label, point_button_delete))
+            if self._view_point_flag:
+                text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
+                text_label.grid(row=row_index, column=0, padx=5, pady=3)
+                trash_image = ctk.CTkImage(Image.open("../images/trash.png").resize((25, 25)))
+                point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
+                                                    command=lambda: self.__delete_point(point,
+                                                                                        text_label,
+                                                                                        point_button_delete))
+                point_button_delete.grid(row=row_index, column=1, padx=(40, 0), pady=5, sticky='e')
+                self._set_points_clear.add((text_label, point_button_delete))
 
     def __delete_point(self, point: Point, label: ctk.CTkLabel, button: ctk.CTkButton) -> None:
         self._points.remove(point)
@@ -397,7 +412,7 @@ class StartWorkButton(ctk.CTkButton):
 
     def handler_start_work(self):
         # print(a.get_value_params())
-        # print(a.get_points())
+        print(a.get_points())
         # print(f'Метод отбора: {a.get_method_selection()}')
         # print(f'Метод скрещивания: {a.get_method_crossing()}')
         # print(f'Метод мутации: {a.get_method_mutation()}')

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from StdClass.StdClass import Point
+import matplotlib.patches as patches
 import random
 from PIL import Image
 
@@ -107,7 +108,7 @@ class Graphic:
         self.ax.set_ylim(self.y_lim_min, self.y_lim_max)
         self._plot_points: set[Point] = points
         self._rectangles: set[int, int, int, int] = set()
-        self.__draw_shapes()
+        self.__draw_points()
 
     def __get_size(self) -> tuple[int, int, int, int]:
         max_x, min_x, max_y, min_y = 0, 0, 0, 0
@@ -118,13 +119,7 @@ class Graphic:
             min_y = min(point.y, min_y)
         return max_x + 5, min_x - 5, max_y + 5, min_y - 5
 
-    def __draw_shapes(self) -> None:
-        self.ax.clear()
-
-        for rect in self._rectangles:
-            self.ax.add_patch(plt.Rectangle((rect[0], rect[1]), rect[2], rect[3], color=rect[4],
-                                            alpha=0.4, linewidth=2))
-
+    def __draw_points(self):
         for point in self._plot_points:
             if point.mark:
                 self.ax.plot(point.x, point.y, 'bo')
@@ -137,17 +132,17 @@ class Graphic:
         self.ax.set_aspect('equal', adjustable='box')
         self.canvas.draw()
 
-    def add_point(self, point: Point) -> None:
-        self._plot_points.add(point)
-        self.__draw_shapes()
-
     def add_rectangle(self, x: int, y: int, width, height: int, color_rectangles: str) -> None:
-        self._rectangles.add((x, y, width, height, color_rectangles))
-        self.__draw_shapes()
+        rectangle = patches.Rectangle((x, y), width, height, color=color_rectangles, alpha=0.4, linewidth=2)
+        self._rectangles.add(rectangle)
+        self.ax.add_patch(rectangle)
+        self.canvas.draw()
 
     def clear_rectangles(self) -> None:
+        for rectangle in self._rectangles:
+            rectangle.remove()
         self._rectangles.clear()
-        self.__draw_shapes()
+        self.canvas.draw()
 
 
 class MainWindow(ctk.CTk):

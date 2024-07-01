@@ -18,7 +18,8 @@ class StartWindow(ctk.CTk):
         self._methods_alg_frame: ctk.CTkFrame = MethodsAlgFrame(self)
         self._values_dict = self._start_params_frame.get_value_start_param()
         self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
-                                                                 value_params=self._values_dict)
+                                                                 value_params=self._values_dict,
+                                                                 value_method=self.get_value_methods())
 
     def get_points(self) -> set[Point]:
         return self._point_frame.get_points()
@@ -45,11 +46,11 @@ class ViewStartParams(ctk.CTkFrame):
         super().__init__(master=master, fg_color='#808080', height=110, width=290)
         self.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         self._state_view_params: dict[str, ctk.CTkLabel] = dict()
-        self.__create_view_start_param_label("Шанс мутации: error", 0)
-        self.__create_view_start_param_label("Шанс cкрещивания: error", 1)
-        self.__create_view_start_param_label("Шанс увеличения прям. при мутации: error", 2)
-        self.__create_view_start_param_label("Максимальное количество эпох: error", 3)
-        self.__create_view_start_param_label("Количество индивидов в эпохе: error", 4)
+        self.__create_view_start_param_label("Шанс мутации: 100%", 0)
+        self.__create_view_start_param_label("Шанс cкрещивания: 100%", 1)
+        self.__create_view_start_param_label("Шанс увеличения прям. при мутации: 100%", 2)
+        self.__create_view_start_param_label("Максимальное количество эпох: 1", 3)
+        self.__create_view_start_param_label("Количество индивидов в эпохе: 1", 4)
 
     def __create_view_start_param_label(self, text, index_row) -> None:
         view_param_label = ctk.CTkLabel(master=self, width=100, text=text)
@@ -65,7 +66,13 @@ class SetterStartParams(ctk.CTkFrame):
         super().__init__(master=master, fg_color='#808080', width=30)
         self.grid(row=0, column=0, padx=40, pady=5, sticky='nsew')
         self._string_value_params: dict[str, ctk.StringVar] = dict()
-        self._value_start_params: dict[str, float] = dict()
+        self._value_start_params: dict[str, float] = {
+            'Шанс мутации': 100.0,
+            'Шанс cкрещивания': 100.0,
+            'Шанс увеличения прям. при мутации': 100.0,
+            'Максимальное количество эпох': 1,
+            'Количество индивидов в эпохе': 1
+        }
         self._view_start_params = ViewStartParams(master)
         self.__create_set_start_param_label('Шанс мутации', 0)
         self.__create_set_start_param_label('Шанс cкрещивания', 2)
@@ -141,10 +148,10 @@ class SetterPoint(ctk.CTkFrame):
                                                 width=200, command=self.__clear_all_points)
         button_all_clear_points.grid(row=4, column=0, padx=0, pady=5)
         self.switcher_view_points = ctk.CTkSwitch(master=self, text='Не отображать точки',
-                                                  fg_color='red', command=self._switch_event)
+                                                  fg_color='red', command=self.__switch_event)
         self.switcher_view_points.grid(row=5, column=0, padx=0, pady=5)
 
-    def _switch_event(self) -> None:
+    def __switch_event(self) -> None:
         if self.switcher_view_points.get():
             self._view_pointers.set_view_point_flag(False)
         else:
@@ -363,7 +370,7 @@ class ChooseMethodFrame(ctk.CTkFrame):
 
 
 class ErrorMessage(ctk.CTk):
-    def __init__(self, text: str):
+    def __init__(self, text: str) -> None:
         super().__init__(fg_color='red')
         self._window_width = 470
         self._window_height = 100
@@ -393,7 +400,8 @@ class ErrorMessage(ctk.CTk):
 
 
 class StartWorkButton(ctk.CTkButton):
-    def __init__(self, master: ctk.CTk, points: list[Point], value_params: dict[str, float]) -> None:
+    def __init__(self, master: ctk.CTk, points: list[Point],
+                 value_params: dict[str, float], value_method: dict[str, str]) -> None:
         super().__init__(master=master, text="Начать работу", width=400, height=70,
                          fg_color='#228B22',
                          hover_color='#008000',
@@ -401,23 +409,24 @@ class StartWorkButton(ctk.CTkButton):
         self._points: set[Point] = points
         self.master = master
         self._value_params: dict[str, float] = value_params
+        self._value_method: dict[str, str] = value_method
         self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
 
     def __handler_start_work(self):
         if len(self._points) == 0:
-            ErrorMessage("Создайте хотя бы одну точку!").mainloop()
+            ErrorMessage("Создайте хотя бы одну точку!")
         elif 'Шанс мутации' not in self._value_params:
-            ErrorMessage("Установите вероятность мутации!").mainloop()
+            ErrorMessage("Установите вероятность мутации!")
         elif 'Шанс cкрещивания' not in self._value_params:
-            ErrorMessage("Установите вероятность cкрещивания!").mainloop()
+            ErrorMessage("Установите вероятность cкрещивания!")
         elif 'Шанс увеличения прям. при мутации' not in self._value_params:
-            ErrorMessage("Установите шанс увеличения прям. при мутации!").mainloop()
+            ErrorMessage("Установите шанс увеличения прям. при мутации!")
         elif 'Максимальное количество эпох' not in self._value_params:
-            ErrorMessage("Установите максимальное количество эпох!").mainloop()
+            ErrorMessage("Установите максимальное количество эпох!")
         else:
             self.master.destroy()
-            MainWindow(points=app.get_points(), params=app.get_value_params(),
-                       methods=app.get_value_methods()).mainloop()
+            MainWindow(points=self._points, params=self._value_params,
+                       methods=self._value_method).mainloop()
 
 
 app = StartWindow()

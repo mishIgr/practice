@@ -22,6 +22,8 @@ class Point:
 
 class Rectangle:
     def __init__(self, left_up_point: Point, right_down_point: Point) -> None:
+        if left_up_point.x > right_down_point.x or left_up_point.y < left_up_point.y:
+            raise ValueError('PIt is impossible to create a square based on points.')
         self._left_up_point = left_up_point
         self._right_down_point = right_down_point
 

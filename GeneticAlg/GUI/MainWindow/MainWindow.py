@@ -151,12 +151,12 @@ class Graphic:
 
 
 class MainWindow(ctk.CTk):
-    def __init__(self) -> None:
-        super().__init__(fg_color="#dbdbdb")
-        self.geometry('1090x530')
+    def __init__(self, points: set[Point], params: dict[str, float], methods: dict[str, str]) -> None:
+        super().__init__(fg_color="white")
+        self.geometry('1055x530')
         self.title("Генетический алгоритм")
         self.resizable(False, False)
-        self._graphic_frame: ctk.CTkFrame = GraphicFrame(self)
+        self._graphic_frame: ctk.CTkFrame = GraphicFrame(self, points)
         self._info_table_frame: ctk.CTkFrame = InfoTableFrame(self)
 
     def add_event(self, event: str) -> None:
@@ -196,19 +196,11 @@ class ViewInfoTable(ctk.CTkScrollableFrame):
 
 
 class GraphicFrame(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk):
+    def __init__(self, master: ctk.CTk, points: set[Point]):
         super().__init__(master=master, fg_color='white', width=640, height=530)
         self.grid(row=0, column=0, sticky='nsew')
         self.grid_propagate(False)
-        self._points: set[Point] = set()
-
-        for i in range(10):
-            x = random.randint(0, 10)
-            y = random.randint(0, 10)
-            mark = random.randint(0, 1)
-            point = Point(x, y, mark)
-            self._points.add(point)
-
+        self._points: set[Point] = points
         self._graphic: Graphic = Graphic(self, self._points)
         self.__create_buttons_frame()
 

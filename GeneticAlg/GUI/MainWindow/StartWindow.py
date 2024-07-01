@@ -26,14 +26,8 @@ class StartWindow(ctk.CTk):
     def get_value_params(self) -> dict[str, float]:
         return self._values_dict
 
-    def get_method_selection(self) -> str:
-        return self._methods_alg_frame.get_value_selection()
-
-    def get_method_crossing(self) -> str:
-        return self._methods_alg_frame.get_value_crossing()
-
-    def get_method_mutation(self) -> str:
-        return self._methods_alg_frame.get_value_mutation()
+    def get_value_methods(self) -> dict[str, str]:
+        return self._methods_alg_frame.get_value_methods()
 
 
 class StartParamsFrame(ctk.CTkFrame):
@@ -328,15 +322,14 @@ class MethodsAlgFrame(ctk.CTkFrame):
                                                                 name_method='Выберите метод мутации',
                                                                 values=self._mutation_values,
                                                                 base_value=self._mutation_values[0])
+        self._value_methods: dict[str, str] = {
+            "Отбор": self._selection_method.get_value_method(),
+            "Скрещивание": self._crossing_method.get_value_method(),
+            "Мутация": self._mutation_method.get_value_method()
+        }
 
-    def get_value_selection(self) -> str:
-        return self._selection_method.get_value_method()
-
-    def get_value_crossing(self) -> str:
-        return self._crossing_method.get_value_method()
-
-    def get_value_mutation(self) -> str:
-        return self._mutation_method.get_value_method()
+    def get_value_methods(self) -> dict[str, str]:
+        return self._value_methods
 
 
 class ChooseMethodFrame(ctk.CTkFrame):
@@ -406,15 +399,11 @@ class StartWorkButton(ctk.CTkButton):
                          hover_color='#008000',
                          command=self.__handler_start_work)
         self._points: set[Point] = points
+        self.master = master
         self._value_params: dict[str, float] = value_params
         self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
 
     def __handler_start_work(self):
-        # print(a.get_value_params())
-        print(a.get_points())
-        # print(f'Метод отбора: {a.get_method_selection()}')
-        # print(f'Метод скрещивания: {a.get_method_crossing()}')
-        # print(f'Метод мутации: {a.get_method_mutation()}')
         if len(self._points) == 0:
             ErrorMessage("Создайте хотя бы одну точку!").mainloop()
         elif 'Шанс мутации' not in self._value_params:
@@ -425,11 +414,12 @@ class StartWorkButton(ctk.CTkButton):
             ErrorMessage("Установите шанс увеличения прям. при мутации!").mainloop()
         elif 'Максимальное количество эпох' not in self._value_params:
             ErrorMessage("Установите максимальное количество эпох!").mainloop()
+        else:
+            self.master.destroy()
+            MainWindow(points=app.get_points(), params=app.get_value_params(),
+                       methods=app.get_value_methods()).mainloop()
 
-        window = MainWindow()
-        window.mainloop()
 
-
-a = StartWindow()
-a.mainloop()
+app = StartWindow()
+app.mainloop()
 

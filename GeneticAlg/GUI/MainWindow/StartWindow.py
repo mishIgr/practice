@@ -21,6 +21,21 @@ class StartWindow(ctk.CTk):
         self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
                                                                  value_params=self._values_dict)
 
+    def get_points(self) -> set[Point]:
+        return self._point_frame.get_points()
+
+    def get_value_params(self) -> dict[str, float]:
+        return self._values_dict
+
+    def get_method_selection(self) -> str:
+        return self._methods_alg_frame.get_value_selection()
+
+    def get_method_crossing(self) -> str:
+        return self._methods_alg_frame.get_value_crossing()
+
+    def get_method_mutation(self) -> str:
+        return self._methods_alg_frame.get_value_mutation()
+
 
 class StartParamsFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTk) -> None:
@@ -102,7 +117,6 @@ class PointFrame(ctk.CTkFrame):
 
     def get_points(self) -> set[Point]:
         return self._set_point_frame.get_points()
-
 
 
 class SetterPoint(ctk.CTkFrame):
@@ -301,6 +315,15 @@ class MethodsAlgFrame(ctk.CTkFrame):
                                                                 values=self._mutation_values,
                                                                 base_value=self._mutation_values[0])
 
+    def get_value_selection(self) -> str:
+        return self._selection_method.get_value_method()
+
+    def get_value_crossing(self) -> str:
+        return self._crossing_method.get_value_method()
+
+    def get_value_mutation(self) -> str:
+        return self._mutation_method.get_value_method()
+
 
 class ChooseMethodFrame(ctk.CTkFrame):
     def __init__(self, master: ctk.CTkFrame, row, column, name_method, values, base_value) -> None:
@@ -373,9 +396,14 @@ class StartWorkButton(ctk.CTkButton):
         self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
 
     def handler_start_work(self):
+        # print(a.get_value_params())
+        # print(a.get_points())
+        # print(f'Метод отбора: {a.get_method_selection()}')
+        # print(f'Метод скрещивания: {a.get_method_crossing()}')
+        # print(f'Метод мутации: {a.get_method_mutation()}')
+
         if len(self._points) == 0:
-            a = ErrorMessage("Создайте хотя бы одну точку!")
-            a.mainloop()
+            ErrorMessage("Создайте хотя бы одну точку!").mainloop()
         elif 'Шанс мутации' not in self._value_params:
             ErrorMessage("Установите вероятность мутации!").mainloop()
         elif 'Шанс cкрещивания' not in self._value_params:
@@ -388,3 +416,4 @@ class StartWorkButton(ctk.CTkButton):
 
 a = StartWindow()
 a.mainloop()
+

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from StdClass.StdClass import *
+from typing import Callable
 from random import random
 
 
@@ -44,7 +45,7 @@ class ParamGeneticAlgorithm:
             raise ValueError('Positive parameter(num_individuals) were expected.')
 
 
-def first_generation(points: list[Point], num_individuals: int) -> list[Rectangle]:
+def first_generation(points: set[Point], num_individuals: int) -> list[Rectangle]:
     ...
 
 
@@ -56,9 +57,12 @@ def crossing(rectangle1: Rectangle, rectangle2: Rectangle) -> Rectangle:
     ...
 
 
-def func_fitness(points: list[Point], rectangle: Rectangle, param_fitness=ParamFitness(1, 1)) -> int:
+def fitness(points: set[Point], rectangle: Rectangle, param_fitness=ParamFitness(1, 1)) -> int:
     ...
 
 
-def next_generation(points: list[Point], rectangles: list[Rectangle], param: ParamGeneticAlgorithm) -> list[Rectangle]:
-    ...
+def get_func_next_generation(func_mutation, func_crossing, func_fitness) -> Callable[[set[Point], list[Rectangle], ParamGeneticAlgorithm], list[Rectangle]]:
+    def next_generation(points: set[Point], rectangles: list[Rectangle], param: ParamGeneticAlgorithm) -> list[Rectangle]:
+        ...
+
+    return next_generation

@@ -1,5 +1,7 @@
 class Point:
     def __init__(self, x: int, y: int, mark: int) -> None:
+        if not (isinstance(x, int) and isinstance(y, int) and isinstance(mark, int)):
+            raise TypeError('x and y and mark must be integers')
         self._x = x
         self._y = y
         self._mark = mark
@@ -22,6 +24,8 @@ class Point:
 
 class Rectangle:
     def __init__(self, left_up_point: Point, right_down_point: Point) -> None:
+        if not (isinstance(left_up_point, Point) and isinstance(right_down_point, Point)):
+            raise TypeError('left_up_point and right_down_point and must be Point')
         if left_up_point.x > right_down_point.x or left_up_point.y < left_up_point.y:
             raise ValueError('PIt is impossible to create a square based on points.')
         self._left_up_point = left_up_point

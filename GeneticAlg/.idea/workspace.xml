@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2b44764e-e3eb-4ad2-a2a5-29cbea0e9acb" name="Changes" comment="main window 0.9">
-      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+    <list default="true" id="828a3d6d-2e31-4929-a075-5e22ebc87f78" name="Changes" comment="gui 1.1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI/MainWindow/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/MainWindow/MainWindow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUI/MainWindow/StartWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI/MainWindow/StartWindow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +27,7 @@
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 5
 }</component>
-  <component name="ProjectId" id="2ibQ9LgPrAPSGYbGpXxNHF9hvoZ" />
+  <component name="ProjectId" id="2ig8n4gkSyrMFfKyzoJwJXDCIzQ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="openDirectoriesWithSingleClick" value="true" />
@@ -38,23 +36,47 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Python.MainWindow.executor&quot;: &quot;Run&quot;,
-    &quot;Python.MainWindow1.executor&quot;: &quot;Run&quot;,
     &quot;Python.StartWindow.executor&quot;: &quot;Run&quot;,
-    &quot;Python.a.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.testgraphic.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;GUI&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="StartWindow" type="PythonConfigurationType" factoryName="Python" activateToolWindowBeforeRun="false" temporary="true" nameIsGenerated="true">
+      <module name="GeneticAlg" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/GUI/MainWindow" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/GUI/MainWindow/StartWindow.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.StartWindow" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -65,125 +87,47 @@
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="2b44764e-e3eb-4ad2-a2a5-29cbea0e9acb" name="Changes" comment="" />
-      <created>1719756644657</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1719756644657</updated>
-      <workItem from="1719756646123" duration="18212000" />
-      <workItem from="1719846161103" duration="1363000" />
-    </task>
-    <task id="LOCAL-00001" summary="Add new setter start param">
+    <task id="LOCAL-00001" summary="add count individe">
       <option name="closed" value="true" />
-      <created>1719760815360</created>
+      <created>1719871940407</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1719760815360</updated>
+      <updated>1719871940407</updated>
     </task>
-    <task id="LOCAL-00002" summary="Add new setter start param">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="828a3d6d-2e31-4929-a075-5e22ebc87f78" name="Changes" comment="add count individe" />
+      <created>1719901024700</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1719901024700</updated>
+      <workItem from="1719901026262" duration="6561000" />
+      <workItem from="1719907720512" duration="740000" />
+    </task>
+    <task id="LOCAL-00002" summary="gui 1.1">
       <option name="closed" value="true" />
-      <created>1719760857116</created>
+      <created>1719906796362</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1719760857116</updated>
+      <updated>1719906796362</updated>
     </task>
-    <task id="LOCAL-00003" summary="Add new setter start param">
-      <option name="closed" value="true" />
-      <created>1719760902457</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1719760902457</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Add new setter start param">
-      <option name="closed" value="true" />
-      <created>1719769420930</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1719769420930</updated>
-    </task>
-    <task id="LOCAL-00005" summary="add choose method frame">
-      <option name="closed" value="true" />
-      <created>1719771494472</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1719771494472</updated>
-    </task>
-    <task id="LOCAL-00006" summary="final start window">
-      <option name="closed" value="true" />
-      <created>1719775161127</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1719775161127</updated>
-    </task>
-    <task id="LOCAL-00007" summary="mirco fiks">
-      <option name="closed" value="true" />
-      <created>1719775627448</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1719775627448</updated>
-    </task>
-    <task id="LOCAL-00008" summary="add switcher off view points">
-      <option name="closed" value="true" />
-      <created>1719853793555</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1719853793555</updated>
-    </task>
-    <task id="LOCAL-00009" summary="main window 0.8">
-      <option name="closed" value="true" />
-      <created>1719864007224</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1719864007224</updated>
-    </task>
-    <task id="LOCAL-00010" summary="main window 0.9">
-      <option name="closed" value="true" />
-      <created>1719867542384</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1719867542384</updated>
-    </task>
-    <option name="localTasksCounter" value="11" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add new setter start param" />
-    <MESSAGE value="add choose method frame" />
-    <MESSAGE value="final start window" />
-    <MESSAGE value="mirco fiks" />
-    <MESSAGE value="add switcher off view points" />
-    <MESSAGE value="main window 0.8" />
-    <MESSAGE value="main window 0.9" />
-    <option name="LAST_COMMIT_MESSAGE" value="main window 0.9" />
+    <MESSAGE value="main window 1.0" />
+    <MESSAGE value="add count individe" />
+    <MESSAGE value="gui 1.1" />
+    <option name="LAST_COMMIT_MESSAGE" value="gui 1.1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/GeneticAlg$MainWindow.coverage" NAME="MainWindow Coverage Results" MODIFIED="1719867304039" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
-    <SUITE FILE_PATH="coverage/GeneticAlg$StartWindow.coverage" NAME="StartWindow Coverage Results" MODIFIED="1719869715689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
+    <SUITE FILE_PATH="coverage/GeneticAlg$MainWindow.coverage" NAME="MainWindow Coverage Results" MODIFIED="1719905303105" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
+    <SUITE FILE_PATH="coverage/GeneticAlg$test.coverage" NAME="test Coverage Results" MODIFIED="1719905993264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
+    <SUITE FILE_PATH="coverage/GeneticAlg$StartWindow.coverage" NAME="StartWindow Coverage Results" MODIFIED="1719908394091" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
     <SUITE FILE_PATH="coverage/GeneticAlg$main.coverage" NAME="main Coverage Results" MODIFIED="1719860813902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GeneticAlg$testgraphic.coverage" NAME="testgraphic Coverage Results" MODIFIED="1719859507823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />
     <SUITE FILE_PATH="coverage/GeneticAlg$MainWindow1.coverage" NAME="MainWindow1 Coverage Results" MODIFIED="1719860129873" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI/MainWindow" />

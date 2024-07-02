@@ -231,14 +231,10 @@ class GraphicFrame(ctk.CTkFrame):
 
     def __handler_forward(self):
         self._graphic.clear_rectangles()
-        self._graphic.add_rectangle(random.randint(0, 10), random.randint(0, 10),
-                                    random.randint(1, 3), random.randint(0, 3), 'green')
-        self._graphic.add_rectangle(random.randint(0, 10), random.randint(0, 10),
-                                    random.randint(1, 3), random.randint(0, 3), 'yellow')
-        self._graphic.add_rectangle(random.randint(0, 10), random.randint(0, 10),
-                                    random.randint(1, 3), random.randint(0, 3), 'blue')
+        self._graphic.add_rectangle(random.randint(0, 50), random.randint(0, 50),
+                                    random.randint(1, 50), random.randint(1, 50), 'green')
+        self._graphic.add_rectangle(random.randint(0, 50), random.randint(0, 50),
+                                    random.randint(1, 50), random.randint(1, 50), 'yellow')
+        self._graphic.add_rectangle(random.randint(0, 50), random.randint(0, 50),
+                                    random.randint(1, 50), random.randint(1, 50), 'blue')
         self.master.add_event("Следующий шаг алгоритма")
-
-
-# window = MainWindow()
-# window.mainloop()

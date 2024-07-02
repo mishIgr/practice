@@ -1,56 +1,7 @@
-from dataclasses import dataclass
 from StdClass.StdClass import *
 from typing import Callable
 import random
 import matplotlib.pyplot as plt
-
-@dataclass
-class ParamFitness:
-    encore: int
-    fine: int
-
-    def __post_init__(self) -> None:
-        if self.encore < 1 or self.fine < 1:
-            raise ValueError('Positive parameters were expected.')
-
-
-@dataclass
-class ParamMutation:
-    probability: float # добавил просто вероятность мутации, можно убрать, если писать отдельные функции для мутации увеличения и уменьшения
-    expansion: float
-    narrowing: float
-
-    def __post_init__(self) -> None:
-        if 0 > self.expansion > 1 or 0 > self.narrowing > 1:
-            raise ValueError('The parameters cannot represent the probability.')
-
-
-@dataclass
-class ParamProbability:
-    crossing: float
-    mutation: ParamMutation
-
-    def __post_init__(self) -> None:
-        if 0 > self.crossing > 1:
-            raise ValueError('The parameter(crossing) cannot represent the probability.')
-
-
-@dataclass
-class ParamGeneticAlgorithm:
-    probability: ParamProbability
-    fitness: ParamFitness
-    num_individuals: int
-
-    def __post_init__(self) -> None:
-        if self.num_individuals < 1:
-            raise ValueError('Positive parameter(num_individuals) were expected.')
-
-
-@dataclass
-class PairRectangleInt:
-    rec: Rectangle
-    value: int
-
 
 
 def first_generation(points: list[Point], num_individuals: int) -> list[PairRectangleInt]:
@@ -156,7 +107,6 @@ def fitness(points: list[Point], rectangle: Rectangle, param_fitness=ParamFitnes
     return fitness_ratio
 
 
-
 def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
                              func_crossing: Callable[[Rectangle, Rectangle], Rectangle],
                              func_fitness: Callable[[list[Point], Rectangle, ParamFitness], int]) -> (
@@ -192,6 +142,7 @@ def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
 
     return next_generation
 
+
 def visualize_population(points, rectangles): # функции визуализации будут удалены
     plt.figure(figsize=(10, 10))
 
@@ -215,6 +166,7 @@ def visualize_population(points, rectangles): # функции визуализ�
     plt.grid(True)
     plt.title("Points and Rectangles Visualization")
     plt.show()
+
 
 def visualize_mutation(original: Rectangle, mutated: Rectangle):
     fig, ax = plt.subplots()
@@ -248,6 +200,7 @@ def visualize_mutation(original: Rectangle, mutated: Rectangle):
     plt.plot(mutated.lup.x, mutated.lup.y, 'ro')
     plt.plot(mutated.rdp.x, mutated.rdp.y, 'bo')
     plt.show()
+
 
 def visualize_crossing(rect1: Rectangle, rect2: Rectangle, new_rect: Rectangle):
     plt.figure(figsize=(10, 10))

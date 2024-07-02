@@ -1,12 +1,12 @@
-from asyncio import Event
-
 import matplotlib.pyplot as plt
 import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from StdClass.StdClass import Point
 import matplotlib.patches as patches
 import random
-from PIL import Image
+from PIL import Image, ImageTk
+import tkinter as tk
+from tkinter import PhotoImage
 
 
 class ZoomPan:
@@ -132,7 +132,7 @@ class Graphic:
         self.ax.set_aspect('equal', adjustable='box')
         self.canvas.draw()
 
-    def add_rectangle(self, x: int, y: int, width, height: int, color_rectangles: str) -> None:
+    def add_rectangle(self, x: int, y: int, width: int, height: int, color_rectangles: str) -> None:
         rectangle = patches.Rectangle((x, y), width, height, color=color_rectangles, alpha=0.4, linewidth=2)
         self._rectangles.add(rectangle)
         self.ax.add_patch(rectangle)

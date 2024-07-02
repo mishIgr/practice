@@ -5,6 +5,7 @@ import random
 import customtkinter as ctk
 from PIL import Image
 from MainWindow import *
+from tkinter import messagebox
 
 
 class StartWindow(ctk.CTk):
@@ -369,34 +370,9 @@ class ChooseMethodFrame(ctk.CTkFrame):
         return self._value_method
 
 
-class ErrorMessage(ctk.CTk):
-    def __init__(self, text: str) -> None:
-        super().__init__(fg_color='red')
-        self._window_width = 470
-        self._window_height = 100
-        self.resizable(False, False)
-        self.__setup_window()
-        self.__add_widgets(text)
-        self.after(1000, self.__fade_out)
-
-    def __fade_out(self) -> None:
-        alpha = self.attributes("-alpha")
-        if alpha > 0:
-            alpha -= 0.05
-            self.attributes("-alpha", alpha)
-            self.after(50, self.__fade_out)
-        else:
-            self.destroy()
-
-    def __setup_window(self):
-        position_x = self.winfo_screenwidth() - self._window_width
-        position_y = self.winfo_screenheight() - self._window_height - 100
-        self.geometry(f"{self._window_width}x{self._window_height}+{position_x}+{position_y}")
-        self.title("Error")
-
-    def __add_widgets(self, text: str):
-        text_label = ctk.CTkLabel(self, text=text, font=("Arial", 20), bg_color="transparent")
-        text_label.place(relx=0.5, rely=0.5, anchor='center')
+class ErrorMessage:
+    def __init__(self, message: str) -> None:
+        messagebox.showerror("Ошибка", message)
 
 
 class StartWorkButton(ctk.CTkButton):
@@ -415,14 +391,6 @@ class StartWorkButton(ctk.CTkButton):
     def __handler_start_work(self):
         if len(self._points) == 0:
             ErrorMessage("Создайте хотя бы одну точку!")
-        elif 'Шанс мутации' not in self._value_params:
-            ErrorMessage("Установите вероятность мутации!")
-        elif 'Шанс cкрещивания' not in self._value_params:
-            ErrorMessage("Установите вероятность cкрещивания!")
-        elif 'Шанс увеличения прям. при мутации' not in self._value_params:
-            ErrorMessage("Установите шанс увеличения прям. при мутации!")
-        elif 'Максимальное количество эпох' not in self._value_params:
-            ErrorMessage("Установите максимальное количество эпох!")
         else:
             self.master.destroy()
             MainWindow(points=self._points, params=self._value_params,

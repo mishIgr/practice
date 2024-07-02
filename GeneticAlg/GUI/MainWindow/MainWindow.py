@@ -111,7 +111,8 @@ class Graphic:
         self.__draw_points()
 
     def __get_size(self) -> tuple[int, int, int, int]:
-        max_x, min_x, max_y, min_y = 0, 0, 0, 0
+        max_x, min_x, max_y, min_y = (next(iter(self._points)).x, next(iter(self._points)).x,
+                                      next(iter(self._points)).y, next(iter(self._points)).y)
         for point in self._points:
             max_x = max(point.x, max_x)
             min_x = min(point.x, min_x)

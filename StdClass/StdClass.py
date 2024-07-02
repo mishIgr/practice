@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 
 
 class Point:
@@ -31,8 +32,8 @@ class Rectangle:
             raise TypeError('left_up_point and right_down_point and must be Point')
         if left_up_point.x > right_down_point.x or left_up_point.y < left_up_point.y:
             raise ValueError('PIt is impossible to create a square based on points.')
-        self._left_up_point = left_up_point
-        self._right_down_point = right_down_point
+        self._left_up_point = left_up_point.copy()
+        self._right_down_point = right_down_point.copy()
 
     @property
     def lup(self):
@@ -58,22 +59,22 @@ class ParamFitness:
 
 @dataclass
 class ParamMutation:
-    probability: float  # добавил просто вероятность мутации, можно убрать, если писать отдельные функции для мутации увеличения и уменьшения
     expansion: float
     narrowing: float
 
     def __post_init__(self) -> None:
-        if 0 > self.expansion > 1 or 0 > self.narrowing > 1 or 0 > self.probability > 1:
+        if 0 > self.expansion > 1 or 0 > self.narrowing > 1:
             raise ValueError('The parameters cannot represent the probability.')
 
 
 @dataclass
 class ParamProbability:
     crossing: float
-    mutation: ParamMutation
+    mutation: float
+    param_mutation: ParamMutation
 
     def __post_init__(self) -> None:
-        if 0 > self.crossing > 1:
+        if 0 > self.crossing > 1 or 0 > self.mutation > 1:
             raise ValueError('The parameter(crossing) cannot represent the probability.')
 
 
@@ -92,3 +93,9 @@ class ParamGeneticAlgorithm:
 class PairRectangleInt:
     rec: Rectangle
     value: int
+
+
+class Func(Enum):
+    Mutation = 1
+    Crossing = 2
+    Fitness = 3

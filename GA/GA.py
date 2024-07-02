@@ -1,5 +1,4 @@
 from StdClass.StdClass import *
-from typing import Callable
 import random
 import matplotlib.pyplot as plt
 
@@ -107,40 +106,44 @@ def fitness(points: list[Point], rectangle: Rectangle, param_fitness=ParamFitnes
     return fitness_ratio
 
 
-def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
-                             func_crossing: Callable[[Rectangle, Rectangle], Rectangle],
-                             func_fitness: Callable[[list[Point], Rectangle, ParamFitness], int]) -> (
-        Callable)[[list[Point], list[PairRectangleInt], ParamGeneticAlgorithm], list[PairRectangleInt]]:
+# def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
+#                              func_crossing: Callable[[Rectangle, Rectangle], Rectangle],
+#                              func_fitness: Callable[[list[Point], Rectangle, ParamFitness], int]) -> (
+#         Callable)[[list[Point], list[PairRectangleInt], ParamGeneticAlgorithm], list[PairRectangleInt]]:
+#
+#     def next_generation(points: list[Point], rectangles: list[PairRectangleInt], param: ParamGeneticAlgorithm) -> list[PairRectangleInt]:
+#         new_generation = []
+#         total_fitness = sum([pair.value for pair in rectangles])
+#
+#         def select_parent(): # выбор родителя
+#             pick = random.uniform(0, total_fitness)
+#             current = 0
+#             for pair in rectangles:
+#                 current += pair.fitness
+#                 if current > pick:
+#                     return pair.rectangle
+#             return rectangles[-1].rectangle
+#
+#         while len(new_generation) < param.num_individuals:
+#             if random.random() < param.probability.crossing:
+#                 parent1 = select_parent()
+#                 parent2 = select_parent()
+#                 descendant = func_crossing(parent1, parent2)
+#             else:
+#                 parent = select_parent()
+#                 descendant = parent
+#
+#             if random.random() < param.probability.mutation.probability: #
+#                 descendant = func_mutation(descendant)
+#
+#             fitness = func_fitness(points, descendant, param)
+#             new_generation.append(PairRectangleInt(descendant, fitness))
+#
+#     return next_generation
 
-    def next_generation(points: list[Point], rectangles: list[PairRectangleInt], param: ParamGeneticAlgorithm) -> list[PairRectangleInt]:
-        new_generation = []
-        total_fitness = sum([pair.value for pair in rectangles])
 
-        def select_parent(): # выбор родителя
-            pick = random.uniform(0, total_fitness)
-            current = 0
-            for pair in rectangles:
-                current += pair.fitness
-                if current > pick:
-                    return pair.rectangle
-            return rectangles[-1].rectangle
-
-        while len(new_generation) < param.num_individuals:
-            if random.random() < param.probability.crossing:
-                parent1 = select_parent()
-                parent2 = select_parent()
-                descendant = func_crossing(parent1, parent2)
-            else:
-                parent = select_parent()
-                descendant = parent
-
-            if random.random() < param.probability.mutation.probability: #
-                descendant = func_mutation(descendant)
-
-            fitness = func_fitness(points, descendant, param)
-            new_generation.append(PairRectangleInt(descendant, fitness))
-
-    return next_generation
+def next_generation(func: dict[Func, ...], points: list[Point], rectangles: list[PairRectangleInt], param: ParamGeneticAlgorithm) -> list[PairRectangleInt]:
+    ...
 
 
 def visualize_population(points, rectangles): # функции визуализации будут удалены

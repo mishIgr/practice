@@ -381,7 +381,8 @@ class StartWorkButton(ctk.CTkButton):
             self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=list(self._points),
                                   first_generation=self._first_generation,
                                   param=self._param_genetic_algorithm)
-            MainWindow(points=self._points, executor=self._executor).mainloop()
+            MainWindow(points=self._points, executor=self._executor,
+                       count_iteration=self._value_params['Максимальное количество эпох']).mainloop()
 
 
 app = StartWindow()

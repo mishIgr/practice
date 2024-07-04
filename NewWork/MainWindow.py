@@ -144,13 +144,14 @@ class Graphic:
 
 
 class MainWindow(ctk.CTk):
-    def __init__(self, points: set[Point], executor: Executor) -> None:
+    def __init__(self, points: set[Point], executor: Executor, count_iteration: float) -> None:
         super().__init__(fg_color="white")
         self.geometry('1055x530')
         self.title("Генетический алгоритм")
         self.resizable(False, False)
         self._graphic_frame: ctk.CTkFrame = GraphicFrame(self, points, executor)
         self._info_table_frame: ctk.CTkFrame = InfoTableFrame(self)
+        self._count_iteration: float = count_iteration
 
     def add_event(self, event: str) -> None:
         self._info_table_frame.add_event(event)

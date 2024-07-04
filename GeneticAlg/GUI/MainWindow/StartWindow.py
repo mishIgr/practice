@@ -1,4 +1,4 @@
-from StdClass.StdClass import Point
+from StdClass.StdClass import Point, Func
 import csv
 from tkinter import filedialog
 import random
@@ -302,7 +302,8 @@ class MethodsAlgFrame(ctk.CTkFrame):
             'Стохастическая универсальная выборка',
             'Ранжированный отбор',
             'Масштабирование приспособленности',
-            'Турнирный отбор']
+            'Турнирный отбор'
+        ]
         self._crossing_values: list[str] = [
             'Одноточечное скрещивание',
             'Двухточечное скрещивание',
@@ -331,9 +332,9 @@ class MethodsAlgFrame(ctk.CTkFrame):
                                                                 values=self._mutation_values,
                                                                 base_value=self._mutation_values[0])
         self._value_methods: dict[str, str] = {
-            "Отбор": self._selection_method.get_value_method(),
-            "Скрещивание": self._crossing_method.get_value_method(),
-            "Мутация": self._mutation_method.get_value_method()
+            Func.Fitness: self._selection_method.get_value_method(),
+            Func.Crossing: self._crossing_method.get_value_method(),
+            Func.Mutation: self._mutation_method.get_value_method()
         }
 
     def get_value_methods(self) -> dict[str, str]:

@@ -356,7 +356,6 @@ class StartWorkButton(ctk.CTkButton):
         self._selection_method: ... = selection_method
         self.grid(row=3, column=0, rowspan=2, columnspan=2, padx=0, pady=30)
 
-
         self._value_methods: dict[Func, ...] = {
             Func.Fitness: fitness,
             Func.Crossing: mutation_random_point,
@@ -371,8 +370,6 @@ class StartWorkButton(ctk.CTkButton):
         self._param_genetic_algorithm = ParamGeneticAlgorithm(probability=self._param_probability,
                                                               fitness=self._param_fitness,
                                                               num_individuals=value_params['Количество индивидов в эпохе'])
-
-
 
     def __handler_start_work(self):
         if len(self._points) == 0:

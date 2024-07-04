@@ -4,20 +4,14 @@ from queue import Queue
 
 
 class State:
-    def __init__(self, points: list[Point], solutions: list, best_solution: Rectangle):
-        self._points = points
+    def __init__(self, solutions: list[RectangleInfo]):
         self._solutions = solutions
-        self._best_solution = best_solution
 
-    def get_values(self) -> tuple:
-        ...
+    def get_values(self) -> list[Rectangle]:
+        return [info.rectangle for info in self._solutions]
 
     def __str__(self):
-        counter = [0] * 2
-        for point in self._points:
-            if self._best_solution.lup.x <= point.x <= self._best_solution.rdp.x and self._best_solution.lup.y >= point.y >= self._best_solution.rdp.y:
-                counter[point.mark] += 1
-        return f'Best solution: points0: {counter[0]}, points1: {counter[1]}'
+        return f'Тут будет текст.'
 
 
 class Executor:
@@ -27,11 +21,8 @@ class Executor:
                  points: list[Point],
                  first_generation: list[RectangleInfo],
                  param: ParamGeneticAlgorithm) -> None:
-        self._func = func
-        self._next_generation = next_generation
-        self._points = points
+        self._next_generation = lambda generation, f=func.copy(), po=points.copy(), pa=param: next_generation(f, po, generation, pa)
         self._generations = [first_generation]
-        self._param = param
         self._counter_generation = 0
         self._max_generation = 0
 
@@ -40,16 +31,13 @@ class Executor:
         max_fitness = ~0 - 1
         for pair in self._generations[self._counter_generation]:
             if queue.qsize() < 3:
-                queue.put(Rectangle(pair.rec.lup, pair.rec.rdp))
-                max_fitness = max(pair.value, max_fitness)
-            elif pair.value > max_fitness:
-                queue.put(pair.rec.copy())
+                queue.put(Rectangle(pair.rectangle.lup, pair.rectangle.rdp))
+                max_fitness = max(pair.fitness, max_fitness)
+            elif pair.fitness > max_fitness:
+                queue.put(pair.rectangle.copy())
                 queue.get()
-                max_fitness = pair.value
-        tmp_solution = [queue.get() for _ in range(3)]
-        return State([point.copy() for point in self._points],
-                     [sol.rec.copy() for sol in tmp_solution],
-                     max(tmp_solution, key=lambda s: s.value).rec.copy())
+                max_fitness = pair.fitness
+        return State([queue.get().copy() for _ in range(3)])
 
     def update_solution(self, num: int = 1) -> None:
         if self._counter_generation + num < 0:
@@ -62,6 +50,6 @@ class Executor:
 
         num -= self._max_generation - self._counter_generation
         for _ in range(num):
-            self._generations.append(self._next_generation(self._points, self._generations[-1], self._param))
+            self._generations.append(self._next_generation(self._generations[-1]))
 
         self._max_generation = self._counter_generation = self._max_generation + num

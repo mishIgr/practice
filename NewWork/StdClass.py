@@ -70,6 +70,9 @@ class ParamFitness:
         if self.encore < 1 or self.fine < 1:
             raise ValueError('Positive parameters were expected.')
 
+    def copy(self):
+        return ParamFitness(self.encore, self.fine)
+
 
 @dataclass
 class ParamMutation:
@@ -79,6 +82,9 @@ class ParamMutation:
     def __post_init__(self) -> None:
         if 0 > self.expansion > 1 or 0 > self.narrowing > 1:
             raise ValueError('The parameters cannot represent the probability.')
+
+    def copy(self):
+        return ParamMutation(self.expansion, self.narrowing)
 
 
 @dataclass
@@ -91,6 +97,9 @@ class ParamProbability:
         if 0 > self.crossing > 1 or 0 > self.mutation > 1:
             raise ValueError('The parameter(crossing) cannot represent the probability.')
 
+    def copy(self):
+        return ParamProbability(self.crossing, self.mutation, self.param_mutation.copy())
+
 
 @dataclass
 class ParamGeneticAlgorithm:
@@ -102,6 +111,9 @@ class ParamGeneticAlgorithm:
         if self.num_individuals < 1:
             raise ValueError('Positive parameter(num_individuals) were expected.')
 
+    def copy(self):
+        return ParamGeneticAlgorithm(self.probability.copy(), self.fitness.copy(), self.num_individuals)
+
 
 @dataclass
 class RectangleInfo:
@@ -109,6 +121,9 @@ class RectangleInfo:
     fitness: int
     zero_points_in: int
     one_points_in: int
+
+    def copy(self):
+        return RectangleInfo(self.rectangle.copy(), self.fitness, self.zero_points_in, self.one_points_in)
 
 
 class Func(Enum):

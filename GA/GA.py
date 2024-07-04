@@ -9,7 +9,7 @@ def first_generation(func: dict[Func, ...], points: list[Point], num_individuals
     for i in range(num_individuals):
         random_point = points[random.randint(0, len(points) - 1)]
         # случайная точка для генерации случайного смещения
-        offset_border_x, offset_border_y = abs(random_point.x) // 2, abs(random_point.y) // 2
+        offset_border_x, offset_border_y = abs(random_point.x), abs(random_point.y)
         # границы случайного смещения
 
         x_min, x_max = sorted((points[random.randint(0, len(points) - 1)].x + random.randint(-offset_border_x, offset_border_x) for k in range(2)))
@@ -32,29 +32,93 @@ def first_generation(func: dict[Func, ...], points: list[Point], num_individuals
     return rectangles
 
 
-def mutation(points: list[Point], rectangle_info: RectangleInfo, parameters: ParamMutation) -> Rectangle:
+
+def mutation_random_point(points: list[Point], rectangle_info: RectangleInfo, parameters: ParamMutation) -> Rectangle:
+    # координаты изменяются в соответствии с случайной выбранной точкой внутри или снаружи прямоугольника
+    # гарантия того, что количество точек внутри прямоугольника изменится
+
     left_up_point = rectangle_info.rectangle.lup
     right_bottom_point = rectangle_info.rectangle.rdp
 
-    x_mutation = random.randint(0, abs(right_bottom_point.x - left_up_point.x) // 2 + 1)
-    y_mutation = random.randint(0, abs(left_up_point.y - right_bottom_point.y) // 2 + 1)
-    # мутация координат (случайное значение от 1 до высоты/ширины прямоугольника, деленной на 2)
+    size_change_sign = 1 if random.random() < parameters.expansion else -1  # выбираем - увеличение или уменьшение
 
-    if random.random() < parameters.expansion: # увеличение
-        new_x, new_y = right_bottom_point.x + x_mutation, left_up_point.y + y_mutation
+    # print(size_change_sign)
 
-    else: # уменьшение
-        new_x, new_y = right_bottom_point.x - x_mutation, left_up_point.y - y_mutation
+    if size_change_sign == 1:
+        needed_points = [point for point in points if point not in rectangle_info.rectangle]
+    else:
+        needed_points = [point for point in points if point in rectangle_info.rectangle]
 
-    left_up_x, left_up_y, right_bottom_x, right_bottom_y = \
-    min(left_up_point.x, new_x), max(right_bottom_point.y, new_y), \
-    max(left_up_point.x, new_x), min(right_bottom_point.y, new_y)
+    if len(needed_points) == 0:
+        needed_points = points
 
-    new_rectangle = Rectangle(Point(left_up_x, left_up_y, 1), Point(right_bottom_x, right_bottom_y, 1))
+    random_point = random.choice(needed_points).copy()
+
+
+    if random.random() < 0.5:
+        new_left_up_x, new_left_up_y = (random_point.x + 1, random_point.y - 1) if size_change_sign == -1 else (random_point.x, random_point.y)
+        new_right_bottom_x, new_right_bottom_y = right_bottom_point.x, right_bottom_point.y
+    else:
+        new_left_up_x, new_left_up_y = (random_point.x - 1, random_point.y + 1) if size_change_sign == -1 else (random_point.x, random_point.y)
+        new_right_bottom_x, new_right_bottom_y = random_point.x, random_point.y
+
+    if new_left_up_x > new_right_bottom_x:
+        new_left_up_x, new_right_bottom_x = new_right_bottom_x, new_left_up_x
+    if new_left_up_y < new_right_bottom_y:
+        new_left_up_y, new_right_bottom_y = new_right_bottom_y, new_left_up_y
+    # гарантия того, что точки встанут на свои места
+
+    new_rectangle = Rectangle(Point(new_left_up_x, new_left_up_y, 1),
+                              Point(new_right_bottom_x, new_right_bottom_y, 1))
+    # создаем мутанта
 
     # print(f'mutation - left up: {rectangle_info.rectangle.lup.x} {rectangle_info.rectangle.lup.y}, right bottom: {rectangle_info.rectangle.rdp.x} {rectangle_info.rectangle.rdp.y}') # логи
 
     return new_rectangle
+
+def mutation_random_change(points: list[Point], rectangle_info: RectangleInfo, parameters: ParamMutation) -> Rectangle:
+    # случайное изменение размера, изменение количества точек внутри не гарантируется
+
+    left_up_point = rectangle_info.rectangle.lup
+    right_bottom_point = rectangle_info.rectangle.rdp
+
+    size_change_sign = 1 if random.random() < parameters.expansion else -1  # выбираем - увеличение или уменьшение
+
+    # print(size_change_sign)
+
+    x_mutation_1 = random.randint(0, abs(right_bottom_point.x - left_up_point.x) // 2 + 1) * size_change_sign
+    x_mutation_2 = random.randint(0, abs(right_bottom_point.x - left_up_point.x) // 2 + 1) * size_change_sign
+    y_mutation_1 = random.randint(0, abs(left_up_point.y - right_bottom_point.y) // 2 + 1) * size_change_sign
+    y_mutation_2 = random.randint(0, abs(left_up_point.y - right_bottom_point.y) // 2 + 1) * size_change_sign
+    # мутация координат (случайное значение от 1 до высоты/ширины прямоугольника, деленной на 2)
+
+    # print(f'x1: {x_mutation_1} x2: {x_mutation_2} y1: {y_mutation_1} y2: {y_mutation_2}')
+
+    new_left_up_x = left_up_point.x - x_mutation_1
+    new_right_bottom_x = right_bottom_point.x + x_mutation_2
+    new_left_up_y = left_up_point.y + y_mutation_1
+    new_right_bottom_y = right_bottom_point.y - y_mutation_2
+    # мутация увеличения и уменьшения может происходить в любом направлении
+
+    if new_left_up_x > new_right_bottom_x:
+        new_left_up_x, new_right_bottom_x = new_right_bottom_x, new_left_up_x
+    if new_left_up_y < new_right_bottom_y:
+        new_left_up_y, new_right_bottom_y = new_right_bottom_y, new_left_up_y
+    # гарантия того, что точки встанут на свои места
+
+    new_rectangle = Rectangle(Point(new_left_up_x, new_left_up_y, 1),
+                              Point(new_right_bottom_x, new_right_bottom_y, 1))
+    # создаем мутанта
+
+    return new_rectangle
+
+def mutation_hybrid(points: list[Point], rectangle_info: RectangleInfo, parameters: ParamMutation) -> Rectangle:
+    # смешанная функция
+
+    if random.random() < 0.5:
+        return mutation_random_point(points, rectangle_info, parameters)
+    else:
+        return mutation_random_change(points, rectangle_info, parameters)
 
 
 def crossing(rectangle1: Rectangle, rectangle2: Rectangle) -> Rectangle:
@@ -67,15 +131,15 @@ def crossing(rectangle1: Rectangle, rectangle2: Rectangle) -> Rectangle:
         else:
             return ((1 - u) / 2) ** (1 / (eta + 1))
 
-    beta = calculate_beta(1) # определить, каким будет значение эта!
+    beta = calculate_beta(0) # определить, каким будет значение эта!
 
     rectangle1_left_up_point, rectangle1_right_bottom_point = rectangle1.lup, rectangle1.rdp
     rectangle2_left_up_point, rectangle2_right_bottom_point = rectangle2.lup, rectangle2.rdp
 
-    x_offspring1 = int(round((1 + beta) * rectangle1_right_bottom_point.x + (1 - beta) * rectangle2_right_bottom_point.x) / 2)
+    x_offspring1 = int(round((1 + beta) * rectangle1_left_up_point.x + (1 - beta) * rectangle2_left_up_point.x) / 2)
     x_offspring2 = int(round((1 - beta) * rectangle1_right_bottom_point.x + (1 + beta) * rectangle2_right_bottom_point.x) / 2)
 
-    y_offspring1 = int(round((1 + beta) * rectangle1_right_bottom_point.y + (1 - beta) * rectangle2_right_bottom_point.y) / 2)
+    y_offspring1 = int(round((1 + beta) * rectangle1_left_up_point.y + (1 - beta) * rectangle2_left_up_point.y) / 2)
     y_offspring2 = int(round((1 - beta) * rectangle1_right_bottom_point.y + (1 + beta) * rectangle2_right_bottom_point.y) / 2)
 
     new_left_up_point = Point(min(x_offspring1, x_offspring2), max(y_offspring1, y_offspring2), 1)
@@ -86,60 +150,26 @@ def crossing(rectangle1: Rectangle, rectangle2: Rectangle) -> Rectangle:
     # print(f'crossing - beta: {beta} left up: {x_offspring1} {y_offspring1}, right bottom: {x_offspring2} {y_offspring2}')  # логи
     return new_rectangle
 
-
-def fitness(points: list[Point], rectangle: Rectangle, param_fitness=ParamFitness(1, 1)) -> RectangleInfo:
-    fitness_ratio = 0
-    zero_points_count = 0
-    one_points_count = 0
-
+def count_points_in_rectangle(points: list[Point], rectangle: Rectangle) -> (int, int):
+    # вспомогательная функция для поиска количества точек в прямоугольнике
+    zero_points_in = 0
+    one_points_in = 0
     for point in points:
         if point in rectangle:
             if point.mark == 1:
-                fitness_ratio += param_fitness.encore
-                one_points_count += 1
+                one_points_in += 1
             else:
-                fitness_ratio -= param_fitness.fine
-                zero_points_count += 1
+                zero_points_in += 1
+
+    return zero_points_in, one_points_in
+
+def fitness(points: list[Point], rectangle: Rectangle, param_fitness=ParamFitness(1, 1)) -> RectangleInfo:
+    zero_points_count, one_points_count = count_points_in_rectangle(points, rectangle)
+    fitness_ratio = one_points_count * param_fitness.encore - zero_points_count * param_fitness.fine
 
     rectangle_info = RectangleInfo(rectangle, fitness_ratio, zero_points_count, one_points_count)
 
     return rectangle_info
-
-
-# def get_func_next_generation(func_mutation: Callable[[Rectangle], Rectangle],
-#                              func_crossing: Callable[[Rectangle, Rectangle], Rectangle],
-#                              func_fitness: Callable[[list[Point], Rectangle, ParamFitness], int]) -> (
-#         Callable)[[list[Point], list[PairRectangleInt], ParamGeneticAlgorithm], list[PairRectangleInt]]:
-#
-#     def next_generation(points: list[Point], rectangles: list[PairRectangleInt], param: ParamGeneticAlgorithm) -> list[PairRectangleInt]:
-#         new_generation = []
-#         total_fitness = sum([pair.value for pair in rectangles])
-#
-#         def select_parent(): # выбор родителя
-#             pick = random.uniform(0, total_fitness)
-#             current = 0
-#             for pair in rectangles:
-#                 current += pair.fitness
-#                 if current > pick:
-#                     return pair.rectangle
-#             return rectangles[-1].rectangle
-#
-#         while len(new_generation) < param.num_individuals:
-#             if random.random() < param.probability.crossing:
-#                 parent1 = select_parent()
-#                 parent2 = select_parent()
-#                 descendant = func_crossing(parent1, parent2)
-#             else:
-#                 parent = select_parent()
-#                 descendant = parent
-#
-#             if random.random() < param.probability.mutation.probability: #
-#                 descendant = func_mutation(descendant)
-#
-#             fitness = func_fitness(points, descendant, param)
-#             new_generation.append(PairRectangleInt(descendant, fitness))
-#
-#     return next_generation
 
 
 def select_parent(rectangles: list[RectangleInfo]):
@@ -153,7 +183,6 @@ def get_next_generation(func: dict[Func, ...], points: list[Point], rectangles: 
     rectangles.sort(key=lambda recti: recti.fitness, reverse=True) # можно заменить на кучу или очередь с приоритетом
     selected = rectangles[:len(rectangles) // 2] # оставляем половину лучших из популяции
                                                  # можно добавить параметр - усечение популяции
-
     new_generation = []
 
     for i in range(parameters.num_individuals):
@@ -165,13 +194,12 @@ def get_next_generation(func: dict[Func, ...], points: list[Point], rectangles: 
             offspring = func[Func.Crossing](parent1, parent2)
             offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
+            if random.random() < parameters.probability.mutation:  # мутация, происходит только при скрещивании
+                offspring = func[Func.Mutation](points, offspring_info, parameters.probability.param_mutation)
+                offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
         else: # оставляем особь предыдущего поколения
             offspring_info = random.choice(selected)
-
-        if random.random() < parameters.probability.mutation:  # мутация, происходит только при скрещивании
-            offspring = func[Func.Mutation](points, offspring_info, parameters.probability.param_mutation)
-            offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
         new_generation.append(offspring_info)
 
@@ -263,17 +291,17 @@ def visualize_crossing(rect1: Rectangle, rect2: Rectangle, new_rect: Rectangle):
 
 
 
-point_quantity = 50
+point_quantity = 100
 points = [Point(random.randint(-120, 120), random.randint(-120, 120), random.randint(0, 1)) for i in range(point_quantity)]
-
+# points = [Point(-120, -120, 1), Point(120, 120, 1)]
 crossing_chance = 0.6
-mutation_chance = 0.1
+mutation_chance = 0.2
 expansion_chance = 0.7
 narrowing_chance = 1 - expansion_chance
-encore = 100
+encore = 1
 fine = 1
 num_individuals = 10
-num_generations = 10
+num_generations = 40
 
 parameters = ParamGeneticAlgorithm(ParamProbability(crossing_chance, mutation_chance, ParamMutation(expansion_chance, narrowing_chance)),\
                                    ParamFitness(encore, fine),\
@@ -281,12 +309,12 @@ parameters = ParamGeneticAlgorithm(ParamProbability(crossing_chance, mutation_ch
 
 # генерация первой популяции
 func = {
-    Func.Mutation: mutation,
+    Func.Mutation: mutation_hybrid,
     Func.Crossing: crossing,
     Func.Fitness: fitness
 }
 print('GENERATION 1')
-rectangles = first_generation(func, points, num_individuals)
+rectangles = first_generation(func, points, parameters.num_individuals)
 visualize_population(points, rectangles)
 
 # генерация новых популяций
@@ -297,7 +325,7 @@ for i in range(1, num_generations):
 
 
 # мутация
-# rectangle = Rectangle(Point(60,100, 1), Point(120,-111,1))
+# rectangle = Rectangle(Point(1,1, 1), Point(1,-2,1))
 # rectangle_info = RectangleInfo(rectangle, fitness(points, rectangle), 0, 0)
 #
 # mutated_rectangle = mutation(points, rectangle_info, parameters.probability.param_mutation)

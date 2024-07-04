@@ -147,7 +147,7 @@ class Graphic:
 
 
 class MainWindow(ctk.CTk):
-    def __init__(self, points: set[Point], params: dict[str, float], methods: dict[str, str]) -> None:
+    def __init__(self, points: set[Point], ex) -> None:
         super().__init__(fg_color="white")
         self.geometry('1055x530')
         self.title("Генетический алгоритм")

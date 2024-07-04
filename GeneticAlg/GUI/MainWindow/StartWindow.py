@@ -1,4 +1,4 @@
-from StdClass.StdClass import Point, Func
+from StdClass.StdClass import *
 import csv
 from tkinter import filedialog
 import random
@@ -6,6 +6,7 @@ import customtkinter as ctk
 from PIL import Image
 from MainWindow import *
 from tkinter import messagebox
+from GA.GA import *
 
 
 class StartWindow(ctk.CTk):
@@ -304,40 +305,17 @@ class MethodsAlgFrame(ctk.CTkFrame):
             'Масштабирование приспособленности',
             'Турнирный отбор'
         ]
-        self._crossing_values: list[str] = [
-            'Одноточечное скрещивание',
-            'Двухточечное скрещивание',
-            'Равномерное скрещивание',
-            'Упорядоченное скрещивание',
-            'Скрещивание смешением',
-            'Имитация двоичного скрещивания'
-        ]
-        self._mutation_values: list[str] = [
-            'Инвертирование бита',
-            'Мутация обменом',
-            'Мутация обращением',
-            'Мутация перетасовкой',
-            'Вещественная мутация'
-        ]
         self._selection_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=0,
                                                                  name_method='Выберите метод отбора',
                                                                  values=self._selection_values,
                                                                  base_value=self._selection_values[0])
-        self._crossing_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=1,
-                                                                name_method='Выберите метод скрещивания',
-                                                                values=self._crossing_values,
-                                                                base_value=self._crossing_values[0])
-        self._mutation_method: ctk.CTkFrame = ChooseMethodFrame(self, row=1, column=0,
-                                                                name_method='Выберите метод мутации',
-                                                                values=self._mutation_values,
-                                                                base_value=self._mutation_values[0])
-        self._value_methods: dict[str, str] = {
-            Func.Fitness: self._selection_method.get_value_method(),
-            Func.Crossing: self._crossing_method.get_value_method(),
-            Func.Mutation: self._mutation_method.get_value_method()
+        self._value_methods: dict[Func, ...] = {
+            Func.Fitness: fitness,
+            Func.Crossing: mutation_random_point,
+            Func.Mutation: crossing
         }
 
-    def get_value_methods(self) -> dict[str, str]:
+    def get_value_methods(self) -> dict[Func, ...]:
         return self._value_methods
 
 
@@ -365,6 +343,7 @@ class ChooseMethodFrame(ctk.CTkFrame):
         choose_method_selection.grid_propagate(False)
 
     def __handler_method_selection(self, choice):
+
         self._value_method = choice
 
     def get_value_method(self) -> str:

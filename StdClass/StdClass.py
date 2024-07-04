@@ -35,6 +35,10 @@ class Rectangle:
         self._left_up_point = left_up_point.copy()
         self._right_down_point = right_down_point.copy()
 
+    def __contains__(self, point: Point): # перегрузил оператор in
+        return self._left_up_point.x <= point.x <= self._right_down_point.x \
+           and self._right_down_point.y <= point.y <= self._left_up_point.y
+
     @property
     def lup(self):
         return self._left_up_point.copy()
@@ -90,9 +94,17 @@ class ParamGeneticAlgorithm:
 
 
 @dataclass
-class PairRectangleInt:
-    rec: Rectangle
-    value: int
+class RectangleInfo:
+    rectangle: Rectangle
+    fitness: int
+    zero_points_in: int
+    one_points_in: int
+
+    def __init__(self, rectangle, fitness, zero_points_in, one_points_in):
+        self.rectangle = rectangle
+        self.fitness = fitness
+        self.zero_points_in = zero_points_in
+        self.one_points_in = one_points_in
 
 
 class Func(Enum):

@@ -50,7 +50,7 @@ class ViewStartParams(ctk.CTkFrame):
     def __create_view_start_param_label(self, text, index_row) -> None:
         view_param_label = ctk.CTkLabel(master=self, width=100, text=text)
         view_param_label.grid(row=index_row, column=0, padx=5, pady=0, sticky='w')
-        self._state_view_params[text[:-7]] = view_param_label
+        self._state_view_params[text.split(':')[0]] = view_param_label
 
     def set_state_view_params(self, name_param: str, text: str) -> None:
         self._state_view_params[name_param].configure(text=text)

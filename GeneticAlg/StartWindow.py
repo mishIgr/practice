@@ -367,7 +367,7 @@ class StartWorkButton(ctk.CTkButton):
         self._param_fitness = ParamFitness(4, 5)
         self._param_genetic_algorithm = ParamGeneticAlgorithm(probability=self._param_probability,
                                                               fitness=self._param_fitness,
-                                                              num_individuals=value_params['Количество индивидов в эпохе'])
+                                                              num_individuals=int(value_params['Количество индивидов в эпохе']))
 
     def __handler_start_work(self):
         if len(self._points) == 0:
@@ -375,7 +375,7 @@ class StartWorkButton(ctk.CTkButton):
         else:
             self.master.destroy()
             self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, list(self._points),
-                                                                           self._value_params['Количество индивидов в эпохе'])
+                                                                           int(self._value_params['Количество индивидов в эпохе']))
 
             self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=list(self._points),
                                   first_generation=self._first_generation,

@@ -5,10 +5,10 @@ from queue import Queue
 
 class State:
     def __init__(self, solutions: list[RectangleInfo], num_state: int) -> None:
-        self._solutions = solutions
+        self._solutions = [info.copy() for info in solutions]
         self._num_state = num_state
         self._counter = 0
-        self._rectangles = [info.rectangle.copy() for info in self._solutions]
+        self._rectangles = [info.rectangle.copy() for info in solutions]
 
     @property
     def step(self):
@@ -29,7 +29,9 @@ class State:
             raise StopIteration
 
     def __str__(self) -> str:
-        return f'Тут будет текст.'
+        return (f'Шаг алгоритма {self._num_state}.\n'
+                f'\tЛучшее решение: {self._solutions[0].one_points_in} точек с меткой 1;'
+                f'{self._solutions[0].zero_points_in} точек с меткой 0')
 
 
 class Executor:

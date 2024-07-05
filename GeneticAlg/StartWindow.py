@@ -42,10 +42,10 @@ class ViewStartParams(ctk.CTkFrame):
         self.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
         self._state_view_params: dict[str, ctk.CTkLabel] = dict()
         self.__create_view_start_param_label("Шанс мутации: 20%", 0)
-        self.__create_view_start_param_label("Шанс cкрещивания: 10%", 1)
-        self.__create_view_start_param_label("Шанс увеличения прям. при мутации: 30%", 2)
-        self.__create_view_start_param_label("Максимальное количество эпох: 50", 3)
-        self.__create_view_start_param_label("Количество индивидов в эпохе: 20", 4)
+        self.__create_view_start_param_label("Шанс cкрещивания: 70%", 1)
+        self.__create_view_start_param_label("Шанс увеличения прям. при мутации: 40%", 2)
+        self.__create_view_start_param_label("Максимальное количество эпох: 200", 3)
+        self.__create_view_start_param_label("Количество индивидов в эпохе: 50", 4)
 
     def __create_view_start_param_label(self, text, index_row) -> None:
         view_param_label = ctk.CTkLabel(master=self, width=100, text=text)
@@ -63,10 +63,10 @@ class SetterStartParams(ctk.CTkFrame):
         self._string_value_params: dict[str, ctk.StringVar] = dict()
         self._value_start_params: dict[str, float] = {
             'Шанс мутации': 0.2,
-            'Шанс cкрещивания': 0.1,
-            'Шанс увеличения прям. при мутации': 0.3,
-            'Максимальное количество эпох': 50,
-            'Количество индивидов в эпохе': 20
+            'Шанс cкрещивания': 0.7,
+            'Шанс увеличения прям. при мутации': 0.4,
+            'Максимальное количество эпох': 200,
+            'Количество индивидов в эпохе': 50
         }
         self._view_start_params = ViewStartParams(master)
         self.__create_set_start_param_label('Шанс мутации', 0)
@@ -376,8 +376,8 @@ class StartWorkButton(ctk.CTkButton):
             self.master.destroy()
             self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, list(self._points),
                                                                            self._value_params['Количество индивидов в эпохе'])
-                                                    #self._selection_method
-            self._executor = Executor(next_generation=get_next_generation, func=self._value_methods, points=list(self._points),
+
+            self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=list(self._points),
                                   first_generation=self._first_generation,
                                   param=self._param_genetic_algorithm)
             MainWindow(points=self._points, executor=self._executor,

@@ -297,7 +297,7 @@ class SelectionMethodFrame(ctk.CTkFrame):
         self._selection_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=0,
                                                                  name_method='Выберите метод отбора',
                                                                  values=self._selection_values,
-                                                                 base_value=self._selection_values[0])
+                                                                 base_value=get_next_generation)
 
     def get_value_method(self) -> dict[Func, ...]:
         return self._selection_method.get_value_method()

@@ -188,7 +188,7 @@ class ViewInfoTable(ctk.CTkScrollableFrame):
 
     def add_event(self, message: str) -> None:
         count = len(self.winfo_children())
-        inform_message = ctk.CTkLabel(master=self, text="#log " + str(count + 1) + ": " + message)
+        inform_message = ctk.CTkLabel(master=self, text="#log: " + message)
         inform_message.grid(row=count, column=0, padx=0, pady=0,
                             sticky="nw", columnspan=2)
         self._parent_canvas.yview("scroll", 1, "units")

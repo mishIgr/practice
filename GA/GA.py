@@ -177,20 +177,15 @@ def select_parent(rectangles: list[RectangleInfo]):
                                       # то есть родители с лучшей приспособленностью выбираются с большей вероятностью
                                       # если будем делать разные методы отбора, то нужно эту функцию занести внутрь get_next_generation
 
-def get_next_generation(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
-    # отбор усечением
-
-    rectangles.sort(key=lambda recti: recti.fitness, reverse=True) # можно заменить на кучу или очередь с приоритетом
-    selected = rectangles[:len(rectangles) // 2] # оставляем половину лучших из популяции
-                                                 # можно добавить параметр - усечение популяции
+def get_new_generation(func: dict[Func, ...], points: list[Point], selected: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
     new_generation = []
 
     for i in range(parameters.num_individuals):
-        if random.random() < parameters.probability.crossing: # скрещищвание
+        if random.random() < parameters.probability.crossing:  # скрещищвание
             parent1 = select_parent(selected).rectangle
             # selected.pop(selected.index(parent1))     # трудоемкая операция за O(n)
-            parent2 = select_parent(selected).rectangle # без нее особь может скрещиваться сама с собой
-                                                        # уточнить по этому поводу
+            parent2 = select_parent(selected).rectangle  # без нее особь может скрещиваться сама с собой
+            # уточнить по этому поводу
             offspring = func[Func.Crossing](parent1, parent2)
             offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
@@ -198,14 +193,40 @@ def get_next_generation(func: dict[Func, ...], points: list[Point], rectangles: 
                 offspring = func[Func.Mutation](points, offspring_info, parameters.probability.param_mutation)
                 offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
-        else: # оставляем особь предыдущего поколения
+        else:  # оставляем особь предыдущего поколения
             offspring_info = random.choice(selected)
 
         new_generation.append(offspring_info)
 
-        print(f'fitness: {offspring_info.fitness}, left up: {offspring_info.rectangle.lup.x} {offspring_info.rectangle.lup.y}, right bottom: {offspring_info.rectangle.rdp.x} {offspring_info.rectangle.rdp.y}') # логи
+        print(
+            f'fitness: {offspring_info.fitness}, left up: {offspring_info.rectangle.lup.x} {offspring_info.rectangle.lup.y}, right bottom: {offspring_info.rectangle.rdp.x} {offspring_info.rectangle.rdp.y}')  # логи
 
     return new_generation
+
+def truncation_selection(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
+    # отбор усечением
+
+    rectangles.sort(key=lambda recti: recti.fitness, reverse=True) # можно заменить на кучу или очередь с приоритетом
+    selected = rectangles[:len(rectangles) // 2] # оставляем половину лучших из популяции
+                                                 # можно добавить параметр - усечение популяции
+    return get_new_generation(func, points, selected, parameters)
+
+def roulette_selection(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
+    # правило рулетки
+
+    fitness_values = [rectangle_info.fitness for rectangle_info in rectangles]
+    min_fitness = min(fitness_values)
+
+    if min_fitness < 0:
+        fitness_values = [i - min_fitness for i in fitness_values]
+    else:
+        fitness_values = [i + 1 for i in fitness_values]
+        # +1, чтобы избежать нулевой вероятности
+
+    selected = random.choices(rectangles, weights=fitness_values, k=num_individuals)
+    # выбираем родителей с вероятностью, зависящей от приспособленности
+
+    return get_new_generation(func, points, selected, parameters)
 
 
 def visualize_population(points, rectangles): # функции визуализации будут удалены
@@ -290,38 +311,38 @@ def visualize_crossing(rect1: Rectangle, rect2: Rectangle, new_rect: Rectangle):
     plt.show()
 
 
+if __name__ == '__main__':
+    point_quantity = 100
+    points = [Point(random.randint(-120, 120), random.randint(-120, 120), random.randint(0, 1)) for i in range(point_quantity)]
+    # points = [Point(-120, -120, 1), Point(120, 120, 1)]
+    crossing_chance = 0.6
+    mutation_chance = 0.2
+    expansion_chance = 0.7
+    narrowing_chance = 1 - expansion_chance
+    encore = 1
+    fine = 1
+    num_individuals = 10
+    num_generations = 40
 
-point_quantity = 100
-points = [Point(random.randint(-120, 120), random.randint(-120, 120), random.randint(0, 1)) for i in range(point_quantity)]
-# points = [Point(-120, -120, 1), Point(120, 120, 1)]
-crossing_chance = 0.6
-mutation_chance = 0.2
-expansion_chance = 0.7
-narrowing_chance = 1 - expansion_chance
-encore = 1
-fine = 1
-num_individuals = 10
-num_generations = 40
+    parameters = ParamGeneticAlgorithm(ParamProbability(crossing_chance, mutation_chance, ParamMutation(expansion_chance, narrowing_chance)),\
+                                       ParamFitness(encore, fine),\
+                                       num_individuals)
 
-parameters = ParamGeneticAlgorithm(ParamProbability(crossing_chance, mutation_chance, ParamMutation(expansion_chance, narrowing_chance)),\
-                                   ParamFitness(encore, fine),\
-                                   num_individuals)
-
-# генерация первой популяции
-func = {
-    Func.Mutation: mutation_hybrid,
-    Func.Crossing: crossing,
-    Func.Fitness: fitness
-}
-print('GENERATION 1')
-rectangles = first_generation(func, points, parameters.num_individuals)
-visualize_population(points, rectangles)
-
-# генерация новых популяций
-for i in range(1, num_generations):
-    print(f'GENERATION {i + 1}')
-    rectangles = get_next_generation(func, points, rectangles, parameters)
+    # генерация первой популяции
+    func = {
+        Func.Mutation: mutation_hybrid,
+        Func.Crossing: crossing,
+        Func.Fitness: fitness
+    }
+    print('GENERATION 1')
+    rectangles = first_generation(func, points, parameters.num_individuals)
     visualize_population(points, rectangles)
+
+    # генерация новых популяций
+    for i in range(1, num_generations):
+        print(f'GENERATION {i + 1}')
+        rectangles = truncation_selection(func, points, rectangles, parameters)
+        visualize_population(points, rectangles)
 
 
 # мутация

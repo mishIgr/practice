@@ -33,13 +33,21 @@ class State:
                 f'{self._solutions[0].zero_points_in} точек с меткой 0')
 
 
+@dataclass
+class StoreData:
+    points: list[Point]
+    value_params: dict[str, float]
+    selection_method: dict[Func, ...]
+
+
 class Executor:
     def __init__(self,
                  next_generation: Callable[[dict[Func, ...], list[Point], list[RectangleInfo], ParamGeneticAlgorithm], list[Rectangle]],
                  func: dict[Func, ...],
                  points: list[Point],
                  first_generation: list[RectangleInfo],
-                 param: ParamGeneticAlgorithm) -> None:
+                 param: ParamGeneticAlgorithm,
+                 value_param: dict[str, float]) -> None:
         self._next_generation = next_generation
         self._func = func
         self._points = [p.copy() for p in points]
@@ -47,6 +55,12 @@ class Executor:
         self._param = param.copy()
         self._counter_generation = 0
         self._max_generation = 1
+        self._data: StoreData = StoreData(points=points,
+                                          value_params=value_param,
+                                          selection_method=next_generation)
+
+    def get_data(self) -> StoreData:
+        return self._data
 
     def get_state(self) -> State | None:
         if self._counter_generation == 0:

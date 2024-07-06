@@ -1,6 +1,5 @@
 import csv
 from tkinter import filedialog
-from MainWindow import *
 from tkinter import messagebox
 from GA import *
 import matplotlib.pyplot as plt
@@ -98,8 +97,8 @@ class ZoomPan:
 
 
 class Graphic:
-    def __init__(self, master: ctk.CTk, points: set[Point]):
-        self._points: set[Point] = points
+    def __init__(self, master: ctk.CTk, points: list[Point]):
+        self._points: list[Point] = points
         self.figure, self.ax = plt.subplots(figsize=(6, 5.6))
         self.canvas = FigureCanvasTkAgg(self.figure, master=master)
         self.canvas.get_tk_widget().pack()
@@ -108,7 +107,7 @@ class Graphic:
         self.x_lim_max, self.x_lim_min, self.y_lim_max, self.y_lim_min = self.__get_size()
         self.ax.set_xlim(self.x_lim_min, self.x_lim_max)
         self.ax.set_ylim(self.y_lim_min, self.y_lim_max)
-        self._plot_points: set[Point] = points
+        self._plot_points: list[Point] = points
         self._rectangles: set[int, int, int, int] = set()
         self.__draw_points()
 
@@ -155,7 +154,7 @@ class Graphic:
 
 
 class MainWindow(ctk.CTk):
-    def __init__(self, points: set[Point], executor: Executor, count_iteration: int) -> None:
+    def __init__(self, points: list[Point], executor: Executor, count_iteration: int) -> None:
         super().__init__(fg_color="white")
         self.geometry('1055x630')
         self.title("Генетический алгоритм")
@@ -230,11 +229,11 @@ class ViewInfoTable(ctk.CTkScrollableFrame):
 
 
 class GraphicFrame(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTk, points: set[Point], executor: Executor, count_iteration: int) -> None:
+    def __init__(self, master: ctk.CTk, points: list[Point], executor: Executor, count_iteration: int) -> None:
         super().__init__(master=master, fg_color='white', width=640, height=530)
         self.grid(row=0, column=0, sticky='nsew')
         self.grid_propagate(False)
-        self._points: set[Point] = points
+        self._points: list[Point] = points
         self._graphic: Graphic = Graphic(self, self._points)
         self.__create_buttons_frame()
         self._executor = executor
@@ -312,7 +311,7 @@ class StartWindow(ctk.CTk):
                                                                  value_params=self._values_dict,
                                                                  selection_method=self._selection_method_frame.get_value_method())
 
-    def get_points(self) -> set[Point]:
+    def get_points(self) -> list[Point]:
         return self._point_frame.get_points()
 
     def get_value_params(self) -> dict[str, float]:
@@ -357,7 +356,7 @@ class ViewStartParams(ctk.CTkFrame):
         for name_param, value in params.items():
             self._state_view_params[name_param].configure(text=f'{name_param}:  {value}')
 
-    def __create_view_start_param_label(self, text, index_row) -> None:
+    def __create_view_start_param_label(self, text: str, index_row: int) -> None:
         view_param_label = ctk.CTkLabel(master=self, width=100, text=text)
         view_param_label.grid(row=index_row, column=0, padx=5, pady=0, sticky='w')
         self._state_view_params[text.split(':')[0]] = view_param_label
@@ -423,10 +422,10 @@ class PointFrame(ctk.CTkFrame):
         self.grid_propagate(False)
         self._set_point_frame: ctk.CTkFrame = SetterPoint(self)
 
-    def get_points(self) -> set[Point]:
+    def get_points(self) -> list[Point]:
         return self._set_point_frame.get_points()
 
-    def view_points(self, points: set[Point]) -> None:
+    def view_points(self, points: list[Point]) -> None:
         self._set_point_frame.view_points(points)
 
 
@@ -438,10 +437,10 @@ class SetterPoint(ctk.CTkFrame):
         self._view_pointers: ctk.CTkScrollableFrame = ViewPointers(master)
         self.__create_choose_add_points()
 
-    def get_points(self) -> set[Point]:
+    def get_points(self) -> list[Point]:
         return self._view_pointers.get_points()
 
-    def view_points(self, points: set[Point]) -> None:
+    def view_points(self, points: list[Point]) -> None:
         self._view_pointers.view_points(points)
 
     def __create_choose_add_points(self) -> None:
@@ -569,9 +568,9 @@ class ViewPointers(ctk.CTkScrollableFrame):
     def __init__(self, master: ctk.CTkFrame) -> None:
         super().__init__(master=master, width=250, height=200)
         self.place(relx=0.5, rely=0.25, anchor='center')
-        self._points: set[Point] = set()
+        self._points: list[Point] = list()
         self._view_point_flag: bool = True
-        self._set_points_clear: [ctk.CTkLabel, ctk.CTkButton] = set()
+        self._set_points_clear: [ctk.CTkLabel, ctk.CTkButton] = list()
         self.bind("<Button-4>", lambda _: self._parent_canvas.yview("scroll", -1, "units"))
         self.bind("<Button-5>", lambda _: self._parent_canvas.yview("scroll", 1, "units"))
 
@@ -579,9 +578,9 @@ class ViewPointers(ctk.CTkScrollableFrame):
         self._view_point_flag = value
 
     def create_point(self, point: Point) -> None:
-        if point not in self._points and point.mark in [0, 1]:
+        if point.mark in [0, 1]:
             row_index = len(self._points)
-            self._points.add(point)
+            self._points.append(point)
             if self._view_point_flag:
                 text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
                 text_label.grid(row=row_index, column=0, padx=5, pady=3)
@@ -591,9 +590,9 @@ class ViewPointers(ctk.CTkScrollableFrame):
                                                                                         text_label,
                                                                                         point_button_delete))
                 point_button_delete.grid(row=row_index, column=1, padx=(40, 0), pady=5, sticky='e')
-                self._set_points_clear.add((text_label, point_button_delete))
+                self._set_points_clear.append((text_label, point_button_delete))
 
-    def view_points(self, points: set[Point]) -> None:
+    def view_points(self, points: list[Point]) -> None:
         self._points = points
         counter = 0
         for point in points:
@@ -605,7 +604,7 @@ class ViewPointers(ctk.CTkScrollableFrame):
                                                                                     text_label,
                                                                                     point_button_delete))
             point_button_delete.grid(row=counter, column=1, padx=(40, 0), pady=5, sticky='e')
-            self._set_points_clear.add((text_label, point_button_delete))
+            self._set_points_clear.append((text_label, point_button_delete))
             counter += 1
 
     def __delete_point(self, point: Point, label: ctk.CTkLabel, button: ctk.CTkButton) -> None:
@@ -613,10 +612,10 @@ class ViewPointers(ctk.CTkScrollableFrame):
         label.destroy()
         button.destroy()
 
-    def get_points(self) -> set[Point]:
+    def get_points(self) -> list[Point]:
         return self._points
 
-    def get_points_clear(self) -> set[Point]:
+    def get_points_clear(self) -> list[Point]:
         return self._set_points_clear
 
 
@@ -641,7 +640,8 @@ class SelectionMethodFrame(ctk.CTkFrame):
 
 
 class ChooseMethodFrame(ctk.CTkFrame):
-    def __init__(self, master: ctk.CTkFrame, row, column, name_method, values, base_value) -> None:
+    def __init__(self, master: ctk.CTkFrame, row: int, column: int, name_method: str,
+                 values: list[str], base_value: str) -> None:
         super().__init__(master=master, height=140, width=320, fg_color='#dbdbdb')
         self.grid(row=row, column=column, padx=0, pady=0)
         self.grid_propagate(False)
@@ -688,7 +688,7 @@ class StartWorkButton(ctk.CTkButton):
                          fg_color='#228B22',
                          hover_color='#008000',
                          command=self.__handler_start_work)
-        self._points: set[Point] = points
+        self._points: list[Point] = points
         self.master = master
         self._value_params: dict[str, float] = value_params
         self._selection_method: ... = selection_method
@@ -713,11 +713,12 @@ class StartWorkButton(ctk.CTkButton):
         if len(self._points) == 0:
             ErrorMessage("Создайте хотя бы одну точку!")
         else:
+            print(len(self._points))
             self.master.destroy()
-            self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, list(self._points),
+            self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, self._points,
                                                                            int(self._value_params['Количество индивидов в эпохе']))
 
-            self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=list(self._points),
+            self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=self._points,
                                   first_generation=self._first_generation,
                                   param=self._param_genetic_algorithm, value_param=self._value_params)
             MainWindow(points=self._points, executor=self._executor,

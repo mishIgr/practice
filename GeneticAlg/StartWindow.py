@@ -320,12 +320,12 @@ class StartWindow(ctk.CTk):
     def restore_data(self, data: StoreData) -> None:
         print(data)
         self._start_work_button.destroy()
-        self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=data.points,
-                                                                 value_params=data.value_params,
-                                                                 selection_method=data.selection_method)
         self._point_frame.view_points(data.points)
         self._selection_method_frame.view_base_value_method(data.selection_method)
         self._start_params_frame.set_view_start_param(data.value_params)
+        self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
+                                                                 value_params=self._values_dict,
+                                                                 selection_method=self._selection_method_frame.get_value_method())
 
 
 class StartParamsFrame(ctk.CTkFrame):
@@ -351,10 +351,6 @@ class ViewStartParams(ctk.CTkFrame):
         self.__create_view_start_param_label("Шанс увеличения прям. при мутации: 40%", 2)
         self.__create_view_start_param_label("Максимальное количество эпох: 200", 3)
         self.__create_view_start_param_label("Количество индивидов в эпохе: 50", 4)
-
-    def set_view_start_param(self, params: dict[str, float]) -> None:
-        for name_param, value in params.items():
-            self._state_view_params[name_param].configure(text=f'{name_param}:  {value}')
 
     def __create_view_start_param_label(self, text: str, index_row: int) -> None:
         view_param_label = ctk.CTkLabel(master=self, width=100, text=text)
@@ -385,7 +381,13 @@ class SetterStartParams(ctk.CTkFrame):
         self.__create_set_start_param_label('Количество индивидов в эпохе', 8)
 
     def set_view_start_param(self, params: dict[str, float]) -> None:
-        self._view_start_params.set_view_start_param(params)
+        for name_param, value in params.items():
+            if name_param in ["Шанс мутации", "Шанс cкрещивания", "Шанс увеличения прям. при мутации"]:
+                self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {value * 100} %')
+                self._value_start_params[name_param] = value
+            else:
+                self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {int(value)}')
+                self._value_start_params[name_param] = int(value)
 
     def __create_set_start_param_label(self, name_param: str, index_row: int) -> None:
         self._string_value_params[name_param] = ctk.StringVar()
@@ -404,8 +406,8 @@ class SetterStartParams(ctk.CTkFrame):
                     self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {number * 100} %')
                     self._value_start_params[name_param] = number
             elif 0 <= number:
-                self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {number}')
-                self._value_start_params[name_param] = number
+                self._view_start_params.set_state_view_params(name_param, f'{name_param}:  {int(number)}')
+                self._value_start_params[name_param] = int(number)
         except ValueError:
             pass
         finally:
@@ -713,7 +715,6 @@ class StartWorkButton(ctk.CTkButton):
         if len(self._points) == 0:
             ErrorMessage("Создайте хотя бы одну точку!")
         else:
-            print(len(self._points))
             self.master.destroy()
             self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, self._points,
                                                                            int(self._value_params['Количество индивидов в эпохе']))

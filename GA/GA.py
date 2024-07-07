@@ -183,9 +183,7 @@ def get_new_generation(func: dict[Func, ...], points: list[Point], selected: lis
     for i in range(parameters.num_individuals):
         if random.random() < parameters.probability.crossing:  # скрещищвание
             parent1 = select_parent(selected).rectangle
-            # selected.pop(selected.index(parent1))     # трудоемкая операция за O(n)
-            parent2 = select_parent(selected).rectangle  # без нее особь может скрещиваться сама с собой
-            # уточнить по этому поводу
+            parent2 = select_parent(selected).rectangle
             offspring = func[Func.Crossing](parent1, parent2)
             offspring_info = func[Func.Fitness](points, offspring, parameters.fitness)
 
@@ -206,7 +204,7 @@ def get_new_generation(func: dict[Func, ...], points: list[Point], selected: lis
 def truncation_selection(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
     # отбор усечением
 
-    rectangles.sort(key=lambda recti: recti.fitness, reverse=True) # можно заменить на кучу или очередь с приоритетом
+    rectangles.sort(key=lambda rectangle: rectangle.fitness, reverse=True)
     selected = rectangles[:len(rectangles) // 2] # оставляем половину лучших из популяции
                                                  # можно добавить параметр - усечение популяции
     return get_new_generation(func, points, selected, parameters)
@@ -227,6 +225,34 @@ def roulette_selection(func: dict[Func, ...], points: list[Point], rectangles: l
     # выбираем родителей с вероятностью, зависящей от приспособленности
 
     return get_new_generation(func, points, selected, parameters)
+
+def tournament_selection(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
+    # турнирный отбор
+
+    selected = []
+    tournament_size = min(parameters.num_individuals // 2 + 1, len(rectangles))
+
+    for i in range(parameters.num_individuals):
+        tournament = random.sample(rectangles, tournament_size) # выбираем особей для турнира
+        best_individual = max(tournament, key=lambda rectangle: rectangle.fitness) # выбираем лучшего из турнира
+        selected.append(best_individual)
+
+    return get_new_generation(func, points, selected, parameters)
+
+def elite_selection(func: dict[Func, ...], points: list[Point], rectangles: list[RectangleInfo], parameters: ParamGeneticAlgorithm) -> list[RectangleInfo]:
+    # элитарный отбор
+
+    num_elites = parameters.num_individuals // 5 + 1 # 20% лучших особей
+
+    rectangles.sort(key=lambda rectangle: rectangle.fitness, reverse=True)
+    elites = rectangles[:num_elites]
+
+    new_parameters = ParamGeneticAlgorithm(parameters.probability, parameters.fitness, parameters.num_individuals - num_elites)
+    # создаем параметры для второй части отбора
+
+    return elites + roulette_selection(func, points, rectangles, new_parameters) # остальные отбираются методом рулетки
+
+
 
 
 def visualize_population(points, rectangles): # функции визуализации будут удалены
@@ -321,7 +347,7 @@ if __name__ == '__main__':
     narrowing_chance = 1 - expansion_chance
     encore = 1
     fine = 1
-    num_individuals = 10
+    num_individuals = 20
     num_generations = 40
 
     parameters = ParamGeneticAlgorithm(ParamProbability(crossing_chance, mutation_chance, ParamMutation(expansion_chance, narrowing_chance)),\
@@ -341,7 +367,7 @@ if __name__ == '__main__':
     # генерация новых популяций
     for i in range(1, num_generations):
         print(f'GENERATION {i + 1}')
-        rectangles = truncation_selection(func, points, rectangles, parameters)
+        rectangles = tournament_selection(func, points, rectangles, parameters)
         visualize_population(points, rectangles)
 
 

@@ -309,7 +309,7 @@ class StartWindow(ctk.CTk):
         self._values_dict = self._start_params_frame.get_value_start_param()
         self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
                                                                  value_params=self._values_dict,
-                                                                 selection_method=self._selection_method_frame.get_value_method())
+                                                                 selection_method=self._selection_method_frame)
 
     def get_points(self) -> list[Point]:
         return self._point_frame.get_points()
@@ -318,14 +318,20 @@ class StartWindow(ctk.CTk):
         return self._values_dict
 
     def restore_data(self, data: StoreData) -> None:
-        print(data)
+        help_dict = {
+            truncation_selection: "Отсечение",
+            roulette_selection: 'Рулетка',
+            tournament_selection: 'Турнир',
+            elite_selection: 'Элита'
+        }
+        print(help_dict[data.selection_method])
         self._start_work_button.destroy()
         self._point_frame.view_points(data.points)
         self._selection_method_frame.view_base_value_method(data.selection_method)
         self._start_params_frame.set_view_start_param(data.value_params)
         self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
                                                                  value_params=self._values_dict,
-                                                                 selection_method=self._selection_method_frame.get_value_method())
+                                                                 selection_method=self._selection_method_frame)
 
 
 class StartParamsFrame(ctk.CTkFrame):
@@ -627,12 +633,15 @@ class SelectionMethodFrame(ctk.CTkFrame):
         self.grid(row=1, column=0, rowspan=2, columnspan=2, padx=0, pady=0)
         self.grid_propagate(False)
         self._selection_values: list[str] = [
-            'Отсечение'
+            'Отсечение',
+            'Рулетка',
+            'Турнир',
+            'Элита'
         ]
         self._selection_method: ctk.CTkFrame = ChooseMethodFrame(self, row=0, column=0,
                                                                  name_method='Выберите метод отбора',
                                                                  values=self._selection_values,
-                                                                 base_value=get_next_generation)
+                                                                 base_value='Отсечение')
 
     def get_value_method(self) -> dict[Func, ...]:
         return self._selection_method.get_value_method()
@@ -655,6 +664,13 @@ class ChooseMethodFrame(ctk.CTkFrame):
 
     def view_base_value_method(self, method: str) -> None:
         self._value_method = method
+        help_dict = {
+            truncation_selection: "Отсечение",
+            roulette_selection: 'Рулетка',
+            tournament_selection: 'Турнир',
+            elite_selection: 'Элита'
+        }
+        self.choose_method_selection.set(help_dict[method])
 
     def __create_name_label(self) -> ctk.CTkLabel:
         border_frame = ctk.CTkFrame(master=self, border_width=4, border_color='black', width=300, height=100)
@@ -663,14 +679,17 @@ class ChooseMethodFrame(ctk.CTkFrame):
         name_label.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
     def __create_choose_frame(self):
-        choose_method_selection = ctk.CTkOptionMenu(master=self, width=250, height=50, values=self._values,
+        self.choose_method_selection = ctk.CTkOptionMenu(master=self, width=250, height=50, values=self._values,
                                                     command=self.__handler_method_selection)
-        choose_method_selection.place(relx=0.5, rely=0.75, anchor='center')
-        choose_method_selection.grid_propagate(False)
+        self.choose_method_selection.place(relx=0.5, rely=0.75, anchor='center')
+        self.choose_method_selection.grid_propagate(False)
 
     def __handler_method_selection(self, choice):
         help_dict = {
-            "Отсечение": get_next_generation
+            "Отсечение": truncation_selection,
+            'Рулетка': roulette_selection,
+            'Турнир': tournament_selection,
+            'Элита': elite_selection
         }
         self._value_method = help_dict[choice]
 
@@ -719,7 +738,7 @@ class StartWorkButton(ctk.CTkButton):
             self._first_generation: list[RectangleInfo] = first_generation(self._value_methods, self._points,
                                                                            int(self._value_params['Количество индивидов в эпохе']))
 
-            self._executor = Executor(next_generation=self._selection_method, func=self._value_methods, points=self._points,
+            self._executor = Executor(next_generation=self._selection_method.get_value_method(), func=self._value_methods, points=self._points,
                                   first_generation=self._first_generation,
                                   param=self._param_genetic_algorithm, value_param=self._value_params)
             MainWindow(points=self._points, executor=self._executor,

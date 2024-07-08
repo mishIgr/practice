@@ -240,7 +240,7 @@ def roulette_selection(func: dict[Func, ...], points: list[Point], rectangles: l
         fitness_values = [i + 1 for i in fitness_values]
         # +1, чтобы избежать нулевой вероятности
 
-    selected = random.choices(rectangles, weights=fitness_values, k=num_individuals)
+    selected = random.choices(rectangles, weights=fitness_values, k=parameters.num_individuals)
     # выбираем родителей с вероятностью, зависящей от приспособленности
 
     return get_new_generation(func, points, selected, parameters)
@@ -407,4 +407,5 @@ def visualize_crossing(rect1: Rectangle, rect2: Rectangle, new_rect: Rectangle):
 # new_rectangle = crossing(rectangle1, rectangle2)
 # visualize_crossing(rectangle1, rectangle2, new_rectangle)
 
-__all__ = ['first_generation', 'mutation_random_point', 'crossing', 'fitness', 'get_next_generation']
+__all__ = ['first_generation', 'mutation_random_point', 'crossing', 'fitness', 'truncation_selection',
+           'roulette_selection', 'tournament_selection', 'elite_selection']

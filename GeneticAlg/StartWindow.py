@@ -276,7 +276,7 @@ class GraphicFrame(ctk.CTkFrame):
 
     def __handler_next_next(self) -> None:
         self._graphic.clear_rectangles()
-        num_step = self._count_iteration - self._executor.get_state().step
+        num_step = self._count_iteration - (0 if self._executor.get_state() is None else self._executor.get_state().step)
         self._executor.update_solution(num_step)
         state = self._executor.get_state()
         self._graphic.add_rectangles(state)

@@ -235,10 +235,12 @@ def roulette_selection(func: dict[Func, ...], points: list[Point], rectangles: l
     min_fitness = min(fitness_values)
 
     if min_fitness < 0:
-        fitness_values = [i - min_fitness for i in fitness_values]
-    else:
+        fitness_values = [i - min_fitness + 1 for i in fitness_values]
+    elif min_fitness == 0:
         fitness_values = [i + 1 for i in fitness_values]
         # +1, чтобы избежать нулевой вероятности
+
+    fitness_values = [*map(lambda n: n**2, fitness_values)]
 
     selected = random.choices(rectangles, weights=fitness_values, k=parameters.num_individuals)
     # выбираем родителей с вероятностью, зависящей от приспособленности

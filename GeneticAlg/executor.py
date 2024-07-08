@@ -1,7 +1,7 @@
 from typing import Callable
 from StdClass import *
 from queue import Queue
-from GA import *
+
 
 class State:
     def __init__(self, solutions: list[RectangleInfo], num_state: int) -> None:

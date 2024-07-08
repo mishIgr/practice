@@ -685,17 +685,18 @@ class ChooseMethodFrame(ctk.CTkFrame):
         self.choose_method_selection.grid_propagate(False)
 
     def __handler_method_selection(self, choice):
+        self._value_method = choice
+
+    def get_value_method(self) -> str:
         help_dict = {
             "Отсечение": truncation_selection,
             'Рулетка': roulette_selection,
             'Турнир': tournament_selection,
             'Элита': elite_selection
         }
-        self._value_method = help_dict[choice]
-
-    def get_value_method(self) -> str:
+        if isinstance(self._value_method, str):
+            return help_dict[self._value_method]
         return self._value_method
-
 
 class ErrorMessage:
     def __init__(self, message: str) -> None:

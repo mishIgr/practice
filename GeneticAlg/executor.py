@@ -29,7 +29,7 @@ class State:
             raise StopIteration
 
     def __str__(self) -> str:
-        return (f'Лучшее решение: {self._solutions[0].one_points_in} точек с меткой 1; '
+        return (f'Шаг {self._num_state}: Лучшее решение: {self._solutions[0].one_points_in} точек с меткой 1; '
                 f'{self._solutions[0].zero_points_in} точек с меткой 0')
 
 

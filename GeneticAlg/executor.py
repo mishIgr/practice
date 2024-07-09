@@ -38,6 +38,7 @@ class StoreData:
     points: list[Point]
     value_params: dict[str, float]
     selection_method: Callable[[dict[Func, ...], list[Point], list[RectangleInfo], ParamGeneticAlgorithm], list[Rectangle]]
+    point_flag: bool
 
 
 class Executor:
@@ -47,7 +48,8 @@ class Executor:
                  points: list[Point],
                  first_generation: list[RectangleInfo],
                  param: ParamGeneticAlgorithm,
-                 value_param: dict[str, float]) -> None:
+                 value_param: dict[str, float],
+                 point_flag: bool) -> None:
         self._next_generation = next_generation
         self._func = func
         self._points = [p.copy() for p in points]
@@ -57,7 +59,8 @@ class Executor:
         self._max_generation = 1
         self._data: StoreData = StoreData(points=points,
                                           value_params=value_param,
-                                          selection_method=next_generation)
+                                          selection_method=next_generation,
+                                          point_flag=point_flag)
 
     def get_data(self) -> StoreData:
         return self._data

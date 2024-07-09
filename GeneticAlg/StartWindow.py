@@ -164,6 +164,7 @@ class MainWindow(ctk.CTk):
         self._info_table_frame: ctk.CTkFrame = InfoTableFrame(self)
         self._return_button_frame: ctk.CTkFrame = ReturnButtonFrame(self)
         self._executor: Executor = executor
+        print(executor.get_data())
 
     def add_event(self, event: str) -> None:
         self._info_table_frame.add_event(event)
@@ -246,22 +247,22 @@ class GraphicFrame(ctk.CTkFrame):
         self.__create_buttons()
 
     def __create_buttons(self) -> None:
-        prev_image = ctk.CTkImage(Image.open("images/prev.png").resize((30, 30)))
+        prev_image = ctk.CTkImage(Image.open("GeneticAlg/images/prev.png").resize((30, 30)))
         self.prev_button = ctk.CTkButton(master=self.graphic_buttons_frame,
                                          width=40, height=40, image=prev_image, text="",
                                          command=self.__handler_prev)
         self.prev_button.grid(row=0, column=1, padx=(5, 0), pady=(10, 5), sticky="nsew")
-        forward_image = ctk.CTkImage(Image.open("images/forward.png").resize((30, 30)))
+        forward_image = ctk.CTkImage(Image.open("GeneticAlg/images/forward.png").resize((30, 30)))
         self.forward_button = ctk.CTkButton(master=self.graphic_buttons_frame,
                                             width=40, height=40, image=forward_image,
                                             text="", command=self.__handler_forward)
         self.forward_button.grid(row=0, column=2, padx=(5, 0), pady=(10, 5), sticky="nsew")
-        next_next_image = ctk.CTkImage(Image.open("images/next_next.png").resize((30, 30)))
+        next_next_image = ctk.CTkImage(Image.open("GeneticAlg/images/next_next.png").resize((30, 30)))
         self.next_next_button = ctk.CTkButton(master=self.graphic_buttons_frame,
                                               width=40, height=40, image=next_next_image,
                                               text="", command=self.__handler_next_next)
         self.next_next_button.grid(row=0, column=3, padx=(5, 0), pady=(10, 5), sticky="nsew")
-        reload_image = ctk.CTkImage(Image.open("images/reload.png").resize((30, 30)))
+        reload_image = ctk.CTkImage(Image.open("GeneticAlg/images/reload.png").resize((30, 30)))
         self.reload_button = ctk.CTkButton(master=self.graphic_buttons_frame,
                                            width=40, height=40, image=reload_image,
                                            text="", command=self.__handler_reload)
@@ -312,6 +313,9 @@ class StartWindow(ctk.CTk):
                                                                  value_params=self._values_dict,
                                                                  selection_method=self._selection_method_frame)
 
+    def get_point_frame(self) -> ctk.CTkFrame:
+        return self._point_frame
+
     def get_points(self) -> list[Point]:
         return self._point_frame.get_points()
 
@@ -319,15 +323,9 @@ class StartWindow(ctk.CTk):
         return self._values_dict
 
     def restore_data(self, data: StoreData) -> None:
-        help_dict = {
-            truncation_selection: "Отсечение",
-            roulette_selection: 'Рулетка',
-            tournament_selection: 'Турнир',
-            elite_selection: 'Элита'
-        }
-        print(help_dict[data.selection_method])
         self._start_work_button.destroy()
-        self._point_frame.view_points(data.points)
+        self._point_frame.view_points(data.points, data.point_flag)
+        self._point_frame.set_point_flag(data.point_flag)
         self._selection_method_frame.view_base_value_method(data.selection_method)
         self._start_params_frame.set_view_start_param(data.value_params)
         self._start_work_button: ctk.CTkButton = StartWorkButton(self, points=self._point_frame.get_points(),
@@ -434,8 +432,14 @@ class PointFrame(ctk.CTkFrame):
     def get_points(self) -> list[Point]:
         return self._set_point_frame.get_points()
 
-    def view_points(self, points: list[Point]) -> None:
-        self._set_point_frame.view_points(points)
+    def view_points(self, points: list[Point], flag: bool) -> None:
+        self._set_point_frame.view_points(points, flag)
+
+    def get_state_point_flag(self) -> bool:
+        return self._set_point_frame.get_state_point_flag()
+
+    def set_point_flag(self, flag: bool) -> None:
+        self._set_point_frame.set_point_flag(flag)
 
 
 class SetterPoint(ctk.CTkFrame):
@@ -451,6 +455,15 @@ class SetterPoint(ctk.CTkFrame):
 
     def view_points(self, points: list[Point]) -> None:
         self._view_pointers.view_points(points)
+
+    def get_state_point_flag(self) -> bool:
+        return self._view_pointers.get_state_point_flag()
+
+    def view_points(self, points: list[Point], flag: bool) -> None:
+        self._view_pointers.view_points(points, flag)
+
+    def set_point_flag(self, flag: bool) -> None:
+        self.switcher_view_points.toggle(flag)
 
     def __create_choose_add_points(self) -> None:
         self.__create_input_frame_point()
@@ -586,6 +599,9 @@ class ViewPointers(ctk.CTkScrollableFrame):
     def set_view_point_flag(self, value: bool) -> None:
         self._view_point_flag = value
 
+    def get_state_point_flag(self) -> bool:
+        return self._view_point_flag
+
     def create_point(self, point: Point) -> None:
         if point.mark in [0, 1]:
             row_index = len(self._points)
@@ -593,7 +609,7 @@ class ViewPointers(ctk.CTkScrollableFrame):
             if self._view_point_flag:
                 text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
                 text_label.grid(row=row_index, column=0, padx=5, pady=3)
-                trash_image = ctk.CTkImage(Image.open("images/trash.png").resize((25, 25)))
+                trash_image = ctk.CTkImage(Image.open("GeneticAlg/images/trash.png").resize((25, 25)))
                 point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
                                                     command=lambda: self.__delete_point(point,
                                                                                         text_label,
@@ -601,20 +617,21 @@ class ViewPointers(ctk.CTkScrollableFrame):
                 point_button_delete.grid(row=row_index, column=1, padx=(40, 0), pady=5, sticky='e')
                 self._set_points_clear.append((text_label, point_button_delete))
 
-    def view_points(self, points: list[Point]) -> None:
+    def view_points(self, points: list[Point], flag: bool) -> None:
         self._points = points
         counter = 0
         for point in points:
-            text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
-            text_label.grid(row=counter, column=0, padx=5, pady=3)
-            trash_image = ctk.CTkImage(Image.open("images/trash.png").resize((25, 25)))
-            point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
-                                                command=lambda: self.__delete_point(point,
-                                                                                    text_label,
-                                                                                    point_button_delete))
-            point_button_delete.grid(row=counter, column=1, padx=(40, 0), pady=5, sticky='e')
-            self._set_points_clear.append((text_label, point_button_delete))
-            counter += 1
+            if flag:
+                text_label = ctk.CTkLabel(master=self, text=f'X: {point.x}, Y: {point.y}, VALUE: {point.mark}')
+                text_label.grid(row=counter, column=0, padx=5, pady=3)
+                trash_image = ctk.CTkImage(Image.open("GeneticAlg/images/trash.png").resize((25, 25)))
+                point_button_delete = ctk.CTkButton(master=self, width=45, text="", image=trash_image,
+                                                    command=lambda: self.__delete_point(point,
+                                                                                        text_label,
+                                                                                        point_button_delete))
+                point_button_delete.grid(row=counter, column=1, padx=(40, 0), pady=5, sticky='e')
+                self._set_points_clear.append((text_label, point_button_delete))
+                counter += 1
 
     def __delete_point(self, point: Point, label: ctk.CTkLabel, button: ctk.CTkButton) -> None:
         self._points.remove(point)
@@ -742,7 +759,8 @@ class StartWorkButton(ctk.CTkButton):
 
             self._executor = Executor(next_generation=self._selection_method.get_value_method(), func=self._value_methods, points=self._points,
                                   first_generation=self._first_generation,
-                                  param=self._param_genetic_algorithm, value_param=self._value_params)
+                                  param=self._param_genetic_algorithm, value_param=self._value_params,
+                                      point_flag=self.master.get_point_frame().get_state_point_flag())
             MainWindow(points=self._points, executor=self._executor,
                        count_iteration=self._value_params['Максимальное количество эпох']).mainloop()
 

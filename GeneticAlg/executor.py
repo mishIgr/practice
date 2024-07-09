@@ -1,5 +1,5 @@
 from typing import Callable
-from StdClass import *
+from GeneticAlg.StdClass import *
 from queue import Queue
 
 
@@ -37,7 +37,7 @@ class State:
 class StoreData:
     points: list[Point]
     value_params: dict[str, float]
-    selection_method: dict[Func, ...]
+    selection_method: Callable[[dict[Func, ...], list[Point], list[RectangleInfo], ParamGeneticAlgorithm], list[Rectangle]]
 
 
 class Executor:

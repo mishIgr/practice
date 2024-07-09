@@ -1,14 +1,15 @@
 import csv
 from tkinter import filedialog
 from tkinter import messagebox
-from GA import *
+from GeneticAlg.GA import *
 import matplotlib.pyplot as plt
 import customtkinter as ctk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.patches as patches
 import random
 from PIL import Image, ImageTk
-from executor import *
+from GeneticAlg.executor import *
+
 
 class ZoomPan:
     def __init__(self):
@@ -744,8 +745,4 @@ class StartWorkButton(ctk.CTkButton):
                                   param=self._param_genetic_algorithm, value_param=self._value_params)
             MainWindow(points=self._points, executor=self._executor,
                        count_iteration=self._value_params['Максимальное количество эпох']).mainloop()
-
-
-app = StartWindow()
-app.mainloop()
 

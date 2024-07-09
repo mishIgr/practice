@@ -1,4 +1,4 @@
-from StdClass import *
+from GeneticAlg.StdClass import *
 import random
 import matplotlib.pyplot as plt
 

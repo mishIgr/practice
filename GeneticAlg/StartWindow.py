@@ -463,7 +463,8 @@ class SetterPoint(ctk.CTkFrame):
         self._view_pointers.view_points(points, flag)
 
     def set_point_flag(self, flag: bool) -> None:
-        self.switcher_view_points.toggle(flag)
+        if not flag:
+            self.switcher_view_points.toggle(flag)
 
     def __create_choose_add_points(self) -> None:
         self.__create_input_frame_point()
